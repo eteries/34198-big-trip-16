@@ -4,12 +4,17 @@
   "private": true,
   "description": "Проект «Большое путешествие» от HTML Academy",
   "scripts": {
+    "start": "webpack serve --mode development --open",
+    "build": "webpack --mode development",
     "eslint": "eslint src/",
     "test": "npm run eslint"
   },
   "devDependencies": {
     "eslint": "7.32.0",
-    "eslint-config-htmlacademy": "5.0.0"
+    "eslint-config-htmlacademy": "5.0.0",
+    "webpack": "5.62.1",
+    "webpack-cli": "4.9.1",
+    "webpack-dev-server": "4.4.0"
   },
   "engines": {
     "node": "16"
