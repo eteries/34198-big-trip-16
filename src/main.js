@@ -10,31 +10,29 @@ import { createNavigationTemplate } from './views/navigation.js';
 import { createFiltersTemplate } from './views/filters.js';
 import { createSortingTemplate } from './views/sorting.js';
 
+import { Positions, renderTemplate } from './utils/render';
+
 const RENDERED_EVENTS_NUMBER = 3;
 
-const render = (container, template, position) => {
-  container.insertAdjacentHTML(position, template);
-};
-
 const tripMainElement = document.querySelector('.trip-main');
-render(tripMainElement, createTripInfoTemplate(), 'afterbegin');
+renderTemplate(tripMainElement, createTripInfoTemplate(), Positions.AFTER_BEGIN);
 
 const tripInfoElement = tripMainElement.querySelector('.trip-info');
-render(tripInfoElement, createTripRouteTemplate(), 'beforeend');
-render(tripInfoElement, createTripCostTemplate(), 'beforeend');
+renderTemplate(tripInfoElement, createTripRouteTemplate(), Positions.BEFORE_END);
+renderTemplate(tripInfoElement, createTripCostTemplate(), Positions.BEFORE_END);
 
 const controlsElement = tripMainElement.querySelector('.trip-controls');
-render(controlsElement, createNavigationTemplate(), 'beforeend');
-render(controlsElement, createFiltersTemplate(), 'beforeend');
+renderTemplate(controlsElement, createNavigationTemplate(), Positions.BEFORE_END);
+renderTemplate(controlsElement, createFiltersTemplate(), Positions.BEFORE_END);
 
 const pageTripEventsElement = document.querySelector('.trip-events');
-render(pageTripEventsElement, createSortingTemplate(), 'beforeend');
-render(pageTripEventsElement, createTripEventsTemplate(), 'beforeend');
-render(pageTripEventsElement, createLoadingTemplate(), 'beforeend');
-render(pageTripEventsElement, createStatisticsTemplate(), 'afterend');
+renderTemplate(pageTripEventsElement, createSortingTemplate(), Positions.BEFORE_END);
+renderTemplate(pageTripEventsElement, createTripEventsTemplate(), Positions.BEFORE_END);
+renderTemplate(pageTripEventsElement, createLoadingTemplate(), Positions.BEFORE_END);
+renderTemplate(pageTripEventsElement, createStatisticsTemplate(), Positions.AFTER_END);
 
 const pageEventListElement = pageTripEventsElement.querySelector('.trip-events__list');
-render(pageEventListElement, createTripEventEditTemplate(), 'beforeend');
+renderTemplate(pageEventListElement, createTripEventEditTemplate(), Positions.BEFORE_END);
 for (let i = 0; i < RENDERED_EVENTS_NUMBER; i++) {
-  render(pageEventListElement, createTripEventTemplate(), 'beforeend');
+  renderTemplate(pageEventListElement, createTripEventTemplate(), Positions.BEFORE_END);
 }
