@@ -34,7 +34,7 @@ renderTemplate(pageTripEventsElement, createLoadingTemplate(), Positions.BEFORE_
 renderTemplate(pageTripEventsElement, createStatisticsTemplate(), Positions.AFTER_END);
 
 const pageEventListElement = pageTripEventsElement.querySelector('.trip-events__list');
-renderTemplate(pageEventListElement, createPointEditTemplate(), Positions.BEFORE_END);
+renderTemplate(pageEventListElement, createPointEditTemplate(generatePoint()), Positions.BEFORE_END);
 new Array(RENDERED_EVENTS_NUMBER)
   .fill(null)
   .map(() => generatePoint())

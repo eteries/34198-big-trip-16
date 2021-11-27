@@ -1,4 +1,4 @@
-import { getRandomArrayElement, getRandomSubPhrase } from '../utils/random.js';
+import { getRandomSubPhrase } from '../utils/random.js';
 import { MOCK_TEXT } from './text.js';
 
 const CITIES = [
@@ -7,9 +7,9 @@ const CITIES = [
   'Amsterdam',
 ];
 
-export function generateDestination () {
+function generateDestination (city) {
   return {
-    name: getRandomArrayElement(CITIES),
+    name: city,
     description: getRandomSubPhrase(MOCK_TEXT),
     pictures: [
       {
@@ -23,3 +23,5 @@ export function generateDestination () {
     ],
   };
 }
+
+export const destinations =  CITIES.map((city) => generateDestination(city));

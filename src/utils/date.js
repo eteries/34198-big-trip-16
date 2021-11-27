@@ -31,4 +31,6 @@ const subtractTimeInterval = (date, interval, unit) => dayjs(date).subtract(inte
 
 const getDifference = (firstDate, secondDate) => dayjs(firstDate).diff(secondDate);
 
-export { getDuration, formatDuration, formatDate, addTimeInterval, subtractTimeInterval, getDifference };
+const getToday = () => dayjs().startOf('date').toISOString();
+
+export { getDuration, formatDuration, formatDate, addTimeInterval, subtractTimeInterval, getDifference, getToday };

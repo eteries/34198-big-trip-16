@@ -1,12 +1,7 @@
-import { generateDestination } from './destination.js';
+import { destinations } from './destination.js';
 import { generateDateFrom, generateDateTo } from './date';
-import { offer } from './offer.js';
-import {
-  getRandomArrayElement,
-  getRandomInt,
-  getRandomSubArray,
-  getUniqueRandomInt
-} from '../utils/random.js';
+import { offers } from './offer.js';
+import { getRandomArrayElement, getRandomInt, getRandomSubArray, getUniqueRandomInt } from '../utils/random.js';
 import { POINT_TYPES } from '../constants';
 
 const EventPrice = {
@@ -27,10 +22,10 @@ export function generatePoint() {
     basePrice: getRandomInt(EventPrice.MIN, EventPrice.MAX),
     dateFrom: dateFrom,
     dateTo: dateTo,
-    destination: generateDestination(),
+    destination: getRandomArrayElement(destinations),
     isFavorite: Boolean(getRandomInt(0,1)),
     id: getUniqueRandomInt(IDRange.MIN, IDRange.MAX)(),
-    offers: getRandomSubArray(offer.offers),
+    offers: getRandomSubArray(offers[0].offers),
     type: getRandomArrayElement(POINT_TYPES),
   };
 }
