@@ -1,4 +1,5 @@
 import { generateDestination } from './destination.js';
+import { generateDateFrom, generateDateTo } from './date';
 import { offer } from './offer.js';
 import {
   getRandomArrayElement,
@@ -19,10 +20,13 @@ const IDRange = {
 };
 
 export function generateTripEvent() {
+  const dateFrom = generateDateFrom();
+  const dateTo = generateDateTo(dateFrom);
+
   return {
     basePrice: getRandomInt(EventPrice.MIN, EventPrice.MAX),
-    dateFrom: null,
-    dateTo: null,
+    dateFrom: dateFrom,
+    dateTo: dateTo,
     destination: generateDestination(),
     isFavorite: Boolean(getRandomInt(0,1)),
     id: getUniqueRandomInt(IDRange.MIN, IDRange.MAX)(),
