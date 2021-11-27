@@ -1,6 +1,6 @@
-import { destinations } from './destination.js';
+import { destinations } from './destinations.js';
 import { generateDateFrom, generateDateTo } from './date';
-import { offers } from './offer.js';
+import { offers } from './offers.js';
 import { getRandomArrayElement, getRandomInt, getRandomSubArray, getUniqueRandomInt } from '../utils/random.js';
 import { POINT_TYPES } from '../constants';
 
@@ -14,7 +14,7 @@ const IDRange = {
   MAX: 9999,
 };
 
-export function generatePoint() {
+const generatePoint = () => {
   const dateFrom = generateDateFrom();
   const dateTo = generateDateTo(dateFrom);
 
@@ -28,4 +28,6 @@ export function generatePoint() {
     offers: getRandomSubArray(offers[0].offers),
     type: getRandomArrayElement(POINT_TYPES),
   };
-}
+};
+
+export { generatePoint };

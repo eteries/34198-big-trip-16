@@ -1,6 +1,6 @@
 import { POINT_TYPES } from '../constants.js';
-import { destinations } from '../mocks/destination.js';
-import { offers as availableOffers } from '../mocks/offer.js';
+import { destinations } from '../mocks/destinations.js';
+import { offers as availableOffers } from '../mocks/offers.js';
 import { formatDate, getToday } from '../utils/date.js';
 
 const createPointTypeTemplate = (type, currentType) => {
@@ -19,12 +19,12 @@ const createPointTypesTemplate = (types, currentType) => (
     .join('')
 );
 
-const getOffersByType = () => availableOffers
-  .filter((offer) => offer.type === 'mock')[0].offers;
+const getOffersByType = (type) => availableOffers
+  .filter((offer) => offer.type === type || offer.type === 'mock')[0].offers;
 
-const createOfferTemplate = (offer, selectedOffers) => {
-  const {id, title, price} = offer;
-  const isAlreadySelected = selectedOffers.some((selected) => title === selected.title);
+const createOfferTemplate = (currentOffer, selectedOffers) => {
+  const {id, title, price} = currentOffer;
+  const isAlreadySelected = selectedOffers.find((selected) => title === selected.title);
 
   return (
     `<div class="event__offer-selector">
@@ -33,7 +33,7 @@ const createOfferTemplate = (offer, selectedOffers) => {
              type="checkbox"
              name="event-offer-${id}"
              ${isAlreadySelected ? 'checked' : ''}>
-      <label class="event__offer-label" for="event-offer-meal-1">
+      <label class="event__offer-label" for="event-offer-${id}">
         <span class="event__offer-title">${title}</span>
           &plus;&euro;&nbsp;
         <span class="event__offer-price">${price}</span>
@@ -42,8 +42,8 @@ const createOfferTemplate = (offer, selectedOffers) => {
   );
 };
 
-const createOffersTemplate = (selectedOffers) => (
-  getOffersByType()
+const createOffersTemplate = (selectedOffers, type) => (
+  getOffersByType(type)
     .map((offer) => createOfferTemplate(offer, selectedOffers))
     .join('')
 );
@@ -52,6 +52,10 @@ const createDestinationsTemplate = () => (
   destinations
     .map(({name}) => `<option value="${name}"></option>`)
     .join('')
+);
+
+const createPicturesTemplate = (pictures) => (
+  pictures.map(({src, description}) => `<img class="event__photo" src="${src}" alt="${description}">`).join('')
 );
 
 export const createPointEditTemplate = (point = {}) => {
@@ -64,11 +68,12 @@ export const createPointEditTemplate = (point = {}) => {
     destination = destinations[0],
   } = point;
 
-  const {description: destinationDescription} = destination;
+  const {description: destinationDescription, pictures} = destination;
 
   const typesTemplate = createPointTypesTemplate(POINT_TYPES, type);
   const destinationsTemplate = createDestinationsTemplate();
-  const offersTemplate = createOffersTemplate(offers);
+  const offersTemplate = createOffersTemplate(offers, type);
+  const picturesTemplate = createPicturesTemplate(pictures);
 
   const dateFromValue = formatDate(dateFrom, 'DD/MM/YY HH:mm');
   const dateToValue = formatDate(dateTo, 'DD/MM/YY HH:mm');
@@ -136,6 +141,11 @@ export const createPointEditTemplate = (point = {}) => {
           <section class="event__section  event__section--destination">
             <h3 class="event__section-title  event__section-title--destination">Destination</h3>
             <p class="event__destination-description">${destinationDescription}</p>
+            <div class="event__photos-container">
+              <div class="event__photos-tape">
+                ${picturesTemplate}
+              </div>
+            </div>
           </section>
         </section>
       </form>
