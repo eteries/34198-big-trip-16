@@ -1,5 +1,5 @@
-import dayjs from 'dayjs';
 import { getRandomInt } from '../utils/random.js';
+import { addTimeInterval, subtractTimeInterval } from '../utils/date';
 
 const StartMinutesRange = {
   MIN: 1,
@@ -12,15 +12,13 @@ const DurationMinutesRange = {
 };
 
 const generateDateFrom = () => {
-  const minuteBeforeOrAfter = getRandomInt(0, 1)
-    ? dayjs().add(getRandomInt(StartMinutesRange.MIN, StartMinutesRange.MAX), 'minute')
-    : dayjs().subtract(getRandomInt(StartMinutesRange.MIN, StartMinutesRange.MAX), 'minute');
+  const minutesBeforeOrAfter = getRandomInt(0, 1)
+    ? addTimeInterval(Date(), getRandomInt(StartMinutesRange.MIN, StartMinutesRange.MAX), 'minute')
+    : subtractTimeInterval(Date(), getRandomInt(StartMinutesRange.MIN, StartMinutesRange.MAX), 'minute');
 
-  return minuteBeforeOrAfter.toISOString();
+  return minutesBeforeOrAfter;
 };
 
-const generateDateTo = (dateFrom) => dayjs(dateFrom)
-  .add(getRandomInt(DurationMinutesRange.MIN, DurationMinutesRange.MAX), 'minute')
-  .toISOString();
+const generateDateTo = (dateFrom) => addTimeInterval(dateFrom, getRandomInt(DurationMinutesRange.MIN, DurationMinutesRange.MAX), 'minute');
 
 export { generateDateFrom, generateDateTo };

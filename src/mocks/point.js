@@ -11,7 +11,7 @@ import { POINT_TYPES } from '../constants';
 
 const EventPrice = {
   MIN: 50,
-  MAX: 1500,
+  MAX: 1000,
 };
 
 const IDRange = {
@@ -19,7 +19,7 @@ const IDRange = {
   MAX: 9999,
 };
 
-export function generateTripEvent() {
+export function generatePoint() {
   const dateFrom = generateDateFrom();
   const dateTo = generateDateTo(dateFrom);
 

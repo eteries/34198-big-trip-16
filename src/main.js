@@ -10,9 +10,11 @@ import { createNavigationTemplate } from './views/navigation.js';
 import { createFiltersTemplate } from './views/filters.js';
 import { createSortingTemplate } from './views/sorting.js';
 
+import { generatePoint } from './mocks/point';
 import { Positions, renderTemplate } from './utils/render';
+import { getDifference } from './utils/date';
 
-const RENDERED_EVENTS_NUMBER = 3;
+const RENDERED_EVENTS_NUMBER = 15;
 
 const tripMainElement = document.querySelector('.trip-main');
 renderTemplate(tripMainElement, createHeaderTemplate(), Positions.AFTER_BEGIN);
@@ -33,6 +35,9 @@ renderTemplate(pageTripEventsElement, createStatisticsTemplate(), Positions.AFTE
 
 const pageEventListElement = pageTripEventsElement.querySelector('.trip-events__list');
 renderTemplate(pageEventListElement, createPointEditTemplate(), Positions.BEFORE_END);
-for (let i = 0; i < RENDERED_EVENTS_NUMBER; i++) {
-  renderTemplate(pageEventListElement, createPointTemplate(), Positions.BEFORE_END);
-}
+new Array(RENDERED_EVENTS_NUMBER)
+  .fill(null)
+  .map(() => generatePoint())
+  .sort(((pointA, pointB) => getDifference(pointA.dateFrom, pointB.dateTo)))
+  .forEach((point) => renderTemplate(pageEventListElement, createPointTemplate(point), Positions.BEFORE_END));
+
