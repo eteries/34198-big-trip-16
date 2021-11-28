@@ -1,5 +1,5 @@
-export const createCostTemplate = () => (
+export const createCostTemplate = (cost = 0) => (
   `<p class="trip-info__cost">
-    Total: &euro;&nbsp;<span class="trip-info__cost-value">1230</span>
+    Total: &euro;&nbsp;<span class="trip-info__cost-value">${cost}</span>
   </p>`
 );

@@ -15,13 +15,18 @@ import { Positions, renderTemplate } from './utils/render';
 import { getDifference } from './utils/date';
 
 const RENDERED_EVENTS_NUMBER = 15;
+const points = new Array(RENDERED_EVENTS_NUMBER)
+  .fill(null)
+  .map(() => generatePoint());
+
+const cost = points.reduce((sum, current) => sum + current.basePrice, 0);
 
 const tripMainElement = document.querySelector('.trip-main');
 renderTemplate(tripMainElement, createHeaderTemplate(), Positions.AFTER_BEGIN);
 
 const headerElement = tripMainElement.querySelector('.trip-info');
 renderTemplate(headerElement, createRouteTemplate(), Positions.BEFORE_END);
-renderTemplate(headerElement, createCostTemplate(), Positions.BEFORE_END);
+renderTemplate(headerElement, createCostTemplate(cost), Positions.BEFORE_END);
 
 const controlsElement = tripMainElement.querySelector('.trip-controls');
 renderTemplate(controlsElement, createNavigationTemplate(), Positions.BEFORE_END);
@@ -35,9 +40,7 @@ renderTemplate(pageTripEventsElement, createStatisticsTemplate(), Positions.AFTE
 
 const pageEventListElement = pageTripEventsElement.querySelector('.trip-events__list');
 renderTemplate(pageEventListElement, createPointEditTemplate(generatePoint()), Positions.BEFORE_END);
-new Array(RENDERED_EVENTS_NUMBER)
-  .fill(null)
-  .map(() => generatePoint())
+points
   .sort(((pointA, pointB) => getDifference(pointA.dateFrom, pointB.dateTo)))
   .forEach((point) => renderTemplate(pageEventListElement, createPointTemplate(point), Positions.BEFORE_END));
 
