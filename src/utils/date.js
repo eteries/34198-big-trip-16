@@ -7,8 +7,8 @@ const getDuration = (dateFrom, dateTo) => dayjs(dateTo).diff(dateFrom);
 
 const formatDate = (date, format) => dayjs(date).format(format);
 
-const formatDuration = (eventDuration) => {
-  const parsedDuration = dayjs.duration(eventDuration);
+const formatPointDuration = (pointDuration) => {
+  const parsedDuration = dayjs.duration(pointDuration);
   const durationElements = [
     ['D', parsedDuration.days()],
     ['H', parsedDuration.hours()],
@@ -25,6 +25,24 @@ const formatDuration = (eventDuration) => {
     .join(' ');
 };
 
+const formatTripDuration = (dateFrom , dateTo) => {
+  const Format = {
+    Years: `${formatDate(dateFrom, 'DD MMM YYYY')} - ${formatDate(dateTo, 'DD MMM YYYY')}`,
+    Month: `${formatDate(dateFrom, 'MMM DD')} - ${formatDate(dateTo, 'MMM DD')}`,
+    Days: `${formatDate(dateFrom, 'MMM DD')} - ${formatDate(dateTo, 'DD')}`,
+  };
+
+  if (dayjs(dateFrom).year() !== dayjs(dateTo).year()) {
+    return Format.Years;
+  }
+
+  if (dayjs(dateFrom).month() !== dayjs(dateTo).month()) {
+    return Format.Month;
+  }
+
+  return Format.Days;
+};
+
 const addTimeInterval = (date, interval, unit) => dayjs(date).add(interval, unit).toISOString();
 
 const subtractTimeInterval = (date, interval, unit) => dayjs(date).subtract(interval, unit).toISOString();
@@ -33,4 +51,4 @@ const getDifference = (firstDate, secondDate) => dayjs(firstDate).diff(secondDat
 
 const getToday = () => dayjs().startOf('date').toISOString();
 
-export { getDuration, formatDuration, formatDate, addTimeInterval, subtractTimeInterval, getDifference, getToday };
+export { getDuration, formatPointDuration, formatDate, addTimeInterval, subtractTimeInterval, getDifference, getToday, formatTripDuration };

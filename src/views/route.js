@@ -1,7 +1,15 @@
-export const createRouteTemplate = () => (
-  `<div class="trip-info__main">
-    <h1 class="trip-info__title">Amsterdam &mdash; Chamonix &mdash; Geneva</h1>
+import { formatTripDuration } from '../utils/date';
 
-    <p class="trip-info__dates">Mar 18&nbsp;&mdash;&nbsp;20</p>
+const formatRoute = (cities) => (
+  cities.length < 4
+    ? `${cities.join(' - ')}`
+    : `${cities[0]} ... ${cities[cities.length - 1]}`
+);
+
+export const createRouteTemplate = (destinations, dateFrom, dateTo) => (
+  `<div class="trip-info__main">
+    <h1 class="trip-info__title">${formatRoute(destinations)}</h1>
+
+    <p class="trip-info__dates">${formatTripDuration(dateFrom, dateTo)}</p>
   </div>`
 );

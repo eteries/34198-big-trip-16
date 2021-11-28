@@ -1,4 +1,4 @@
-import { getDuration, formatDuration, formatDate } from '../utils/date.js';
+import { getDuration, formatPointDuration, formatDate } from '../utils/date.js';
 
 const createOfferItemTemplate = ({title, price}) => (
   `<li class="event__offer">
@@ -23,7 +23,7 @@ export const createPointTemplate = (point) => {
   const timeFromAttr = formatDate(dateFrom, 'YYYY-MM-DD[T]HH:mm');
   const timeTo = formatDate(dateTo, 'HH:mm');
   const timeToAttr = formatDate(dateFrom, 'YYYY-MM-DD[T]HH:mm');
-  const duration = formatDuration(getDuration(dateFrom, dateTo));
+  const duration = formatPointDuration(getDuration(dateFrom, dateTo));
   const favoriteClass = isFavorite ? 'event__favorite-btn--active' : '';
 
   return (
