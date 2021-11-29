@@ -13,29 +13,23 @@ import { createSortingTemplate } from './views/sorting.js';
 import { generatePoint } from './mocks/point';
 import { Positions, renderTemplate } from './utils/render';
 import { getDifference } from './utils/date';
+import { calculateCost, calculateTripEnd, calculateTripStart, getUniqueDestinations } from './utils/calculate';
 
 const RENDERED_EVENTS_NUMBER = 15;
 const points = new Array(RENDERED_EVENTS_NUMBER)
   .fill(null)
-  .map(() => generatePoint());
+  .map(generatePoint);
 
-const cost = points.reduce((sum, current) => sum + current.basePrice, 0);
-
-const uniqueDestinations = [...new Set(points.map(({destination = {}}) => destination.name))];
-
-const calculateTripStart = () => points
-  .map(({dateFrom}) => dateFrom)
-  .sort()[0];
-
-const calculateTripEnd = () => points
-  .map(({dateTo}) => dateTo)
-  .sort((dateA, dateB) => dateB - dateA)[0];
+const cost = calculateCost(points);
+const uniqueDestinations = getUniqueDestinations(points);
+const startDate = calculateTripStart(points);
+const endDate = calculateTripEnd(points);
 
 const tripMainElement = document.querySelector('.trip-main');
 renderTemplate(tripMainElement, createHeaderTemplate(), Positions.AFTER_BEGIN);
 
 const headerElement = tripMainElement.querySelector('.trip-info');
-renderTemplate(headerElement, createRouteTemplate(uniqueDestinations, calculateTripStart(), calculateTripEnd()), Positions.BEFORE_END);
+renderTemplate(headerElement, createRouteTemplate(uniqueDestinations, startDate, endDate), Positions.BEFORE_END);
 renderTemplate(headerElement, createCostTemplate(cost), Positions.BEFORE_END);
 
 const controlsElement = tripMainElement.querySelector('.trip-controls');

@@ -1,10 +1,4 @@
-const SORTINGS = [
-  'day',
-  'event',
-  'time',
-  'price',
-  'offer',
-];
+import { SORTINGS } from '../constants';
 
 const activeSorting = SORTINGS[3];
 

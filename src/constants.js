@@ -9,3 +9,22 @@ export const POINT_TYPES = [
   'Sightseeing',
   'Restaurant',
 ];
+
+export const TABS = [
+  'Table',
+  'Stats'
+];
+
+export const FILTERS = [
+  'everything',
+  'future',
+  'past',
+];
+
+export const SORTINGS = [
+  'day',
+  'event',
+  'time',
+  'price',
+  'offer',
+];

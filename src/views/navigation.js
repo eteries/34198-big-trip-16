@@ -1,7 +1,4 @@
-const TABS = [
-  'Table',
-  'Stats'
-];
+import { TABS } from '../constants';
 
 const activeTab = TABS[0];
 

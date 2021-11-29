@@ -1,8 +1,4 @@
-const FILTERS = [
-  'everything',
-  'future',
-  'past',
-];
+import { FILTERS } from '../constants';
 
 const activeFilter = FILTERS[0];
 
