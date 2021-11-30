@@ -1,6 +1,23 @@
-export const createNavigationTemplate = () => (
-  `<nav class="trip-controls__trip-tabs  trip-tabs">
-    <a class="trip-tabs__btn  trip-tabs__btn--active" href="#">Table</a>
-    <a class="trip-tabs__btn" href="#">Stats</a>
-  </nav>`
+import { TABS } from '../constants';
+
+const activeTab = TABS[0];
+
+const createTabsTemplate = () => (
+  TABS
+    .map((tabName) => {
+      const activeClass = tabName === activeTab ? 'trip-tabs__btn--active' : '';
+      return (
+        `<a class="trip-tabs__btn ${activeClass}" href="#">${tabName}</a>`
+      );
+    })
+    .join('')
 );
+
+export const createNavigationTemplate = () => {
+  const tabsTemplate = createTabsTemplate();
+  return (
+    `<nav class="trip-controls__trip-tabs  trip-tabs">
+      ${tabsTemplate}
+    </nav>`
+  );
+};
