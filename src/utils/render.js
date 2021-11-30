@@ -9,4 +9,15 @@ const renderTemplate = (container, template, position) => {
   container.insertAdjacentHTML(position, template);
 };
 
-export { Positions, renderTemplate };
+const createElement = (template) => {
+  const wrapper = document.createElement('div');
+  wrapper.insertAdjacentHTML(Positions.BEFORE_END, template);
+
+  return wrapper.firstChild;
+};
+
+const renderElement = (container, element, position) => {
+  container.insertAdjacentElement(position, element);
+};
+
+export { Positions, createElement, renderElement, renderTemplate };
