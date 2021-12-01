@@ -28,3 +28,9 @@ export const SORTINGS = [
   'price',
   'offer',
 ];
+
+export const STATISTICS = [
+  'money',
+  'type',
+  'time',
+];

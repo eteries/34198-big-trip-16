@@ -1,8 +1,5 @@
-const STATISTICS = [
-  'money',
-  'type',
-  'time',
-];
+import { createElement } from '../utils/render';
+import { STATISTICS } from '../constants';
 
 const createStatisticsListTemplate = () => (
   STATISTICS
@@ -15,7 +12,7 @@ const createStatisticsListTemplate = () => (
 );
 
 
-export const createStatisticsTemplate = () => {
+const createStatisticsTemplate = () => {
   const statisticsListTemplate = createStatisticsListTemplate();
   return (
     `<section class="statistics">
@@ -24,3 +21,23 @@ export const createStatisticsTemplate = () => {
     </section>`
   );
 };
+
+export default class Statistics {
+  #element = null;
+
+  get element() {
+    if (!this.#element) {
+      this.#element = createElement(this.template);
+    }
+
+    return this.#element;
+  }
+
+  get template() {
+    return createStatisticsTemplate();
+  }
+
+  removeElement() {
+    this.#element = null;
+  }
+}
