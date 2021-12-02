@@ -1,4 +1,4 @@
-import { createElement } from '../utils/render';
+import { createElement } from '../utils/dom';
 
 const createHeaderTemplate = () => '<section class="trip-main__trip-info  trip-info"></section>';
 

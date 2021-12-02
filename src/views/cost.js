@@ -1,4 +1,4 @@
-import { createElement } from '../utils/render';
+import { createElement } from '../utils/dom';
 
 const createCostTemplate = (cost = 0) => (
   `<p class="trip-info__cost">

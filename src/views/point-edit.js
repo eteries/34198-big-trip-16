@@ -2,7 +2,7 @@ import { POINT_TYPES } from '../constants.js';
 import { destinations } from '../mocks/destinations.js';
 import { offers as availableOffers } from '../mocks/offers.js';
 import { formatDate, getToday } from '../utils/date.js';
-import { createElement } from '../utils/render';
+import { createElement } from '../utils/dom';
 import { getOffersByType } from '../utils/calculate';
 
 const createPointTypeTemplate = (type, currentType) => {

@@ -1,5 +1,5 @@
 import { SORTINGS } from '../constants';
-import { createElement } from '../utils/render';
+import { createElement } from '../utils/dom';
 
 const createSortingListTemplate = (activeSorting) => (
   SORTINGS

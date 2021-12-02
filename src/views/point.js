@@ -1,5 +1,5 @@
 import { getDuration, formatPointDuration, formatDate } from '../utils/date.js';
-import { createElement } from '../utils/render';
+import { createElement } from '../utils/dom';
 
 const createOfferItemTemplate = ({title, price}) => (
   `<li class="event__offer">

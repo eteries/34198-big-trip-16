@@ -16,4 +16,6 @@ const renderElement = (container, element, position) => {
   container.insertAdjacentElement(position, element);
 };
 
-export { Positions, createElement, renderElement };
+const isEscape = (evt) => evt.key === 'Escape' || evt.key === 'Esc';
+
+export { Positions, createElement, renderElement, isEscape };

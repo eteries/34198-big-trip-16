@@ -1,4 +1,4 @@
-import { createElement } from '../utils/render';
+import { createElement } from '../utils/dom';
 import { STATISTICS } from '../constants';
 
 const createStatisticsListTemplate = () => (

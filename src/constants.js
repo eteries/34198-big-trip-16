@@ -34,3 +34,5 @@ export const STATISTICS = [
   'type',
   'time',
 ];
+
+export const RENDERED_EVENTS_NUMBER = 15;

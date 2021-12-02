@@ -1,4 +1,4 @@
-import { createElement } from '../utils/render';
+import { createElement } from '../utils/dom';
 
 const createLoadingTemplate = () => '<p class="trip-events__msg">Loading...</p>';
 

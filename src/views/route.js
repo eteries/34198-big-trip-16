@@ -1,5 +1,5 @@
 import { formatTripDuration } from '../utils/date';
-import { createElement } from '../utils/render';
+import { createElement } from '../utils/dom';
 
 const formatRoute = (cities) => (
   cities.length < 4

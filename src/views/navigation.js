@@ -1,5 +1,5 @@
 import { TABS } from '../constants';
-import { createElement } from '../utils/render';
+import { createElement } from '../utils/dom';
 
 const createTabsTemplate = (activeTab) => (
   TABS

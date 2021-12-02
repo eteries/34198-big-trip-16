@@ -1,5 +1,5 @@
 import { FILTERS } from '../constants';
-import { createElement } from '../utils/render';
+import { createElement } from '../utils/dom';
 
 const createFiltersListTemplate = (activeFilter) => (
   FILTERS
