@@ -11,7 +11,7 @@ import FiltersView from './views/filters.js';
 import SortingView from './views/sorting.js';
 
 import { generatePoint } from './mocks/point';
-import { Positions, renderElement, renderTemplate } from './utils/render';
+import { Positions, renderElement } from './utils/render';
 import { getDifference } from './utils/date';
 import { calculateCost, calculateTripEnd, calculateTripStart, getUniqueDestinations } from './utils/calculate';
 

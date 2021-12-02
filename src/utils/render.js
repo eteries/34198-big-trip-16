@@ -5,10 +5,6 @@ const Positions = {
   AFTER_END: 'afterend',
 };
 
-const renderTemplate = (container, template, position) => {
-  container.insertAdjacentHTML(position, template);
-};
-
 const createElement = (template) => {
   const wrapper = document.createElement('div');
   wrapper.insertAdjacentHTML(Positions.BEFORE_END, template);
@@ -20,4 +16,4 @@ const renderElement = (container, element, position) => {
   container.insertAdjacentElement(position, element);
 };
 
-export { Positions, createElement, renderElement, renderTemplate };
+export { Positions, createElement, renderElement };
