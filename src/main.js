@@ -1,11 +1,11 @@
 import HeaderView from './views/header.js';
-import { createRouteTemplate } from './views/route.js';
-import { createCostTemplate } from './views/cost.js';
+import RouteView from './views/route.js';
+import CostView from './views/cost.js';
 import StatisticsView from './views/statistics.js';
 import LoadingView from './views/loading.js';
 import PointsView from './views/points.js';
-import { createPointTemplate } from './views/point.js';
-import { createPointEditTemplate } from './views/point-edit.js';
+import PointView from './views/point.js';
+import PointEditView from './views/point-edit.js';
 import NavigationView from './views/navigation.js';
 import FiltersView from './views/filters.js';
 import SortingView from './views/sorting.js';
@@ -29,8 +29,8 @@ const tripMainElement = document.querySelector('.trip-main');
 renderElement(tripMainElement, new HeaderView().element, Positions.AFTER_BEGIN);
 
 const headerElement = tripMainElement.querySelector('.trip-info');
-renderTemplate(headerElement, createRouteTemplate(uniqueDestinations, startDate, endDate), Positions.BEFORE_END);
-renderTemplate(headerElement, createCostTemplate(cost), Positions.BEFORE_END);
+renderElement(headerElement, new RouteView(uniqueDestinations, startDate, endDate).element, Positions.BEFORE_END);
+renderElement(headerElement, new CostView(cost).element, Positions.BEFORE_END);
 
 const controlsElement = tripMainElement.querySelector('.trip-controls');
 renderElement(controlsElement, new NavigationView().element, Positions.BEFORE_END);
@@ -43,8 +43,8 @@ renderElement(pageTripEventsElement, new LoadingView().element, Positions.BEFORE
 renderElement(pageTripEventsElement, new StatisticsView().element, Positions.AFTER_END);
 
 const pageEventListElement = pageTripEventsElement.querySelector('.trip-events__list');
-renderTemplate(pageEventListElement, createPointEditTemplate(generatePoint()), Positions.BEFORE_END);
+renderElement(pageEventListElement, new PointEditView(generatePoint()).element, Positions.BEFORE_END);
 points
   .sort(((pointA, pointB) => getDifference(pointA.dateFrom, pointB.dateFrom)))
-  .forEach((point) => renderTemplate(pageEventListElement, createPointTemplate(point), Positions.BEFORE_END));
+  .forEach((point) => renderElement(pageEventListElement, new PointView(point).element, Positions.BEFORE_END));
 
