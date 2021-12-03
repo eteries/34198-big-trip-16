@@ -72,10 +72,9 @@ const createPointTemplate = (point) => {
 
 export default class Point {
   #element = null;
-  #point;
 
   constructor(point) {
-    this.#point = point;
+    this.point = point;
   }
 
   get element() {
@@ -87,7 +86,7 @@ export default class Point {
   }
 
   get template() {
-    return createPointTemplate(this.#point);
+    return createPointTemplate(this.point);
   }
 
   removeElement() {

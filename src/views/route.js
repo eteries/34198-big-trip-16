@@ -17,14 +17,11 @@ const createRouteTemplate = (destinations, dateFrom, dateTo) => (
 
 export default class Route {
   #element = null;
-  #destinations;
-  #dateFrom;
-  #dateTo;
 
   constructor(destinations, dateFrom, dateTo) {
-    this.#destinations = destinations;
-    this.#dateFrom = dateFrom;
-    this.#dateTo = dateTo;
+    this.destinations = destinations;
+    this.dateFrom = dateFrom;
+    this.dateTo = dateTo;
   }
 
   get element() {
@@ -36,7 +33,7 @@ export default class Route {
   }
 
   get template() {
-    return createRouteTemplate(this.#destinations, this.#dateFrom, this.#dateTo);
+    return createRouteTemplate(this.destinations, this.dateFrom, this.dateTo);
   }
 
   removeElement() {

@@ -8,7 +8,6 @@ const createCostTemplate = (cost = 0) => (
 
 export default class Cost {
   #element = null;
-  cost;
 
   constructor(cost) {
     this.cost = cost;
