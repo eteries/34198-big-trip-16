@@ -1,8 +1,7 @@
 import { FILTERS } from '../constants';
+import { createElement } from '../utils/dom';
 
-const activeFilter = FILTERS[0];
-
-const createFiltersListTemplate = () => (
+const createFiltersListTemplate = (activeFilter) => (
   FILTERS
     .map((name) => (
       `<div class="trip-filters__filter">
@@ -13,8 +12,8 @@ const createFiltersListTemplate = () => (
     .join('')
 );
 
-export const createFiltersTemplate = () => {
-  const filtersListTemplate = createFiltersListTemplate();
+const createFiltersTemplate = (activeFilter) => {
+  const filtersListTemplate = createFiltersListTemplate(activeFilter);
 
   return (
     `<form class="trip-filters" action="#" method="get">
@@ -23,3 +22,24 @@ export const createFiltersTemplate = () => {
   </form>`
   );
 };
+
+export default class Filters {
+  #element = null;
+  #activeFilter = FILTERS[0];
+
+  get element() {
+    if (!this.#element) {
+      this.#element = createElement(this.template);
+    }
+
+    return this.#element;
+  }
+
+  get template() {
+    return createFiltersTemplate(this.#activeFilter);
+  }
+
+  removeElement() {
+    this.#element = null;
+  }
+}

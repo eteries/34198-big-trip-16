@@ -1,4 +1,5 @@
 import { getDuration, formatPointDuration, formatDate } from '../utils/date.js';
+import { createElement } from '../utils/dom';
 
 const createOfferItemTemplate = ({title, price}) => (
   `<li class="event__offer">
@@ -14,7 +15,7 @@ const offersTemplate = (offers) => (
     .join('')
 );
 
-export const createPointTemplate = (point) => {
+const createPointTemplate = (point) => {
   const {dateFrom, dateTo, type, destination, basePrice, offers, isFavorite} = point;
   const {name: destinationName} = destination;
 
@@ -68,3 +69,28 @@ export const createPointTemplate = (point) => {
     </li>`
   );
 };
+
+export default class Point {
+  #element = null;
+  #point;
+
+  constructor(point) {
+    this.#point = point;
+  }
+
+  get element() {
+    if (!this.#element) {
+      this.#element = createElement(this.template);
+    }
+
+    return this.#element;
+  }
+
+  get template() {
+    return createPointTemplate(this.#point);
+  }
+
+  removeElement() {
+    this.#element = null;
+  }
+}

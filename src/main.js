@@ -1,50 +1,94 @@
-import { createHeaderTemplate } from './views/header.js';
-import { createRouteTemplate } from './views/route.js';
-import { createCostTemplate } from './views/cost.js';
-import { createStatisticsTemplate } from './views/statistics.js';
-import { createLoadingTemplate } from './views/loading.js';
-import { createPointsTemplate } from './views/points.js';
-import { createPointTemplate } from './views/point.js';
-import { createPointEditTemplate } from './views/point-edit.js';
-import { createNavigationTemplate } from './views/navigation.js';
-import { createFiltersTemplate } from './views/filters.js';
-import { createSortingTemplate } from './views/sorting.js';
+import HeaderView from './views/header.js';
+import RouteView from './views/route.js';
+import CostView from './views/cost.js';
+import StatisticsView from './views/statistics.js';
+import LoadingView from './views/loading.js';
+import PointsView from './views/points.js';
+import PointView from './views/point.js';
+import PointEditView from './views/point-edit.js';
+import NavigationView from './views/navigation.js';
+import FiltersView from './views/filters.js';
+import SortingView from './views/sorting.js';
 
 import { generatePoint } from './mocks/point';
-import { Positions, renderTemplate } from './utils/render';
+import { isEscape, Positions, renderElement } from './utils/dom';
 import { getDifference } from './utils/date';
 import { calculateCost, calculateTripEnd, calculateTripStart, getUniqueDestinations } from './utils/calculate';
+import { RENDERED_EVENTS_NUMBER } from './constants';
 
-const RENDERED_EVENTS_NUMBER = 15;
-const points = new Array(RENDERED_EVENTS_NUMBER)
+const renderPoint = (container, point) => {
+  const pointComponent = new PointView(point);
+  const pointEditComponent = new PointEditView(point);
+
+  const openButton = pointComponent.element.querySelector('.event__rollup-btn');
+  const closeButton = pointEditComponent.element.querySelector('.event__rollup-btn');
+  const editForm = pointEditComponent.element.querySelector('.event--edit');
+
+  const openEditor = () => {
+    pointComponent.element.replaceWith(pointEditComponent.element);
+  };
+
+  const closeEditor = () => {
+    pointEditComponent.element.replaceWith(pointComponent.element);
+  };
+
+  const onDocumentKeyDown = (evt) => {
+    if (isEscape(evt)) {
+      closeEditor();
+    }
+  };
+
+  openButton.addEventListener('click', () => {
+    openEditor();
+    document.addEventListener('keydown', onDocumentKeyDown);
+  });
+
+  closeButton.addEventListener('click', () => {
+    closeEditor();
+    document.removeEventListener('keydown', onDocumentKeyDown);
+  });
+
+  editForm.addEventListener('submit', (evt) => {
+    evt.preventDefault();
+    closeEditor();
+    document.removeEventListener('keydown', onDocumentKeyDown);
+  });
+
+  renderElement(container, pointComponent.element, Positions.BEFORE_END);
+};
+
+const renderTrip = (points) => {
+  const cost = calculateCost(points);
+  const uniqueDestinations = getUniqueDestinations(points);
+  const startDate = calculateTripStart(points);
+  const endDate = calculateTripEnd(points);
+
+  const tripMainElement = document.querySelector('.trip-main');
+  renderElement(tripMainElement, new HeaderView().element, Positions.AFTER_BEGIN);
+
+  const headerElement = tripMainElement.querySelector('.trip-info');
+  renderElement(headerElement, new RouteView(uniqueDestinations, startDate, endDate).element, Positions.BEFORE_END);
+  renderElement(headerElement, new CostView(cost).element, Positions.BEFORE_END);
+
+  const controlsElement = tripMainElement.querySelector('.trip-controls');
+  renderElement(controlsElement, new NavigationView().element, Positions.BEFORE_END);
+  renderElement(controlsElement, new FiltersView().element, Positions.BEFORE_END);
+
+  const pageTripEventsElement = document.querySelector('.trip-events');
+  renderElement(pageTripEventsElement, new SortingView().element, Positions.BEFORE_END);
+  renderElement(pageTripEventsElement, new PointsView().element, Positions.BEFORE_END);
+  renderElement(pageTripEventsElement, new LoadingView().element, Positions.BEFORE_END);
+  renderElement(pageTripEventsElement, new StatisticsView().element, Positions.AFTER_END);
+
+  const pageEventListElement = pageTripEventsElement.querySelector('.trip-events__list');
+
+  points
+    .sort(((pointA, pointB) => getDifference(pointA.dateFrom, pointB.dateFrom)))
+    .forEach((point) => renderPoint(pageEventListElement, point));
+};
+
+const tripPoints = new Array(RENDERED_EVENTS_NUMBER)
   .fill(null)
   .map(generatePoint);
 
-const cost = calculateCost(points);
-const uniqueDestinations = getUniqueDestinations(points);
-const startDate = calculateTripStart(points);
-const endDate = calculateTripEnd(points);
-
-const tripMainElement = document.querySelector('.trip-main');
-renderTemplate(tripMainElement, createHeaderTemplate(), Positions.AFTER_BEGIN);
-
-const headerElement = tripMainElement.querySelector('.trip-info');
-renderTemplate(headerElement, createRouteTemplate(uniqueDestinations, startDate, endDate), Positions.BEFORE_END);
-renderTemplate(headerElement, createCostTemplate(cost), Positions.BEFORE_END);
-
-const controlsElement = tripMainElement.querySelector('.trip-controls');
-renderTemplate(controlsElement, createNavigationTemplate(), Positions.BEFORE_END);
-renderTemplate(controlsElement, createFiltersTemplate(), Positions.BEFORE_END);
-
-const pageTripEventsElement = document.querySelector('.trip-events');
-renderTemplate(pageTripEventsElement, createSortingTemplate(), Positions.BEFORE_END);
-renderTemplate(pageTripEventsElement, createPointsTemplate(), Positions.BEFORE_END);
-renderTemplate(pageTripEventsElement, createLoadingTemplate(), Positions.BEFORE_END);
-renderTemplate(pageTripEventsElement, createStatisticsTemplate(), Positions.AFTER_END);
-
-const pageEventListElement = pageTripEventsElement.querySelector('.trip-events__list');
-renderTemplate(pageEventListElement, createPointEditTemplate(generatePoint()), Positions.BEFORE_END);
-points
-  .sort(((pointA, pointB) => getDifference(pointA.dateFrom, pointB.dateFrom)))
-  .forEach((point) => renderTemplate(pageEventListElement, createPointTemplate(point), Positions.BEFORE_END));
-
+renderTrip(tripPoints);

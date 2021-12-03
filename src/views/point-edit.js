@@ -2,6 +2,8 @@ import { POINT_TYPES } from '../constants.js';
 import { destinations } from '../mocks/destinations.js';
 import { offers as availableOffers } from '../mocks/offers.js';
 import { formatDate, getToday } from '../utils/date.js';
+import { createElement } from '../utils/dom';
+import { getOffersByType } from '../utils/calculate';
 
 const createPointTypeTemplate = (type, currentType) => {
   const checked = type === currentType ? 'checked' : '';
@@ -18,9 +20,6 @@ const createPointTypesTemplate = (types, currentType) => (
     .map((type) => createPointTypeTemplate(type, currentType))
     .join('')
 );
-
-const getOffersByType = (type) => availableOffers
-  .filter((offer) => offer.type === type || offer.type === 'mock')[0].offers;
 
 const createOfferTemplate = (currentOffer, selectedOffers) => {
   const {id, title, price} = currentOffer;
@@ -43,7 +42,7 @@ const createOfferTemplate = (currentOffer, selectedOffers) => {
 };
 
 const createOffersTemplate = (selectedOffers, type) => (
-  getOffersByType(type)
+  getOffersByType(availableOffers, type)
     .map((offer) => createOfferTemplate(offer, selectedOffers))
     .join('')
 );
@@ -58,7 +57,7 @@ const createPicturesTemplate = (pictures) => (
   pictures.map(({src, description}) => `<img class="event__photo" src="${src}" alt="${description}">`).join('')
 );
 
-export const createPointEditTemplate = (point = {}) => {
+const createPointEditTemplate = (point = {}) => {
   const {
     type = POINT_TYPES[0],
     dateFrom = getToday(),
@@ -152,3 +151,29 @@ export const createPointEditTemplate = (point = {}) => {
     </li>`
   );
 };
+
+export default class PointEdit {
+  #element = null;
+  #point;
+
+  constructor(point) {
+    this.#point = point;
+  }
+
+  get element() {
+    if (!this.#element) {
+      this.#element = createElement(this.template);
+    }
+
+    return this.#element;
+  }
+
+  get template() {
+    return createPointEditTemplate(this.#point);
+  }
+
+  removeElement() {
+    this.#element = null;
+  }
+}
+

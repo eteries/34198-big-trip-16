@@ -13,4 +13,7 @@ const calculateTripEnd = (points) => (
     .reverse()[0]
 );
 
-export { calculateCost, getUniqueDestinations, calculateTripStart, calculateTripEnd};
+const getOffersByType = (offers, type) => offers
+  .filter((offer) => offer.type === type || offer.type === 'mock')[0].offers;
+
+export { calculateCost, getUniqueDestinations, calculateTripStart, calculateTripEnd, getOffersByType};

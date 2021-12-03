@@ -28,3 +28,11 @@ export const SORTINGS = [
   'price',
   'offer',
 ];
+
+export const STATISTICS = [
+  'money',
+  'type',
+  'time',
+];
+
+export const RENDERED_EVENTS_NUMBER = 15;

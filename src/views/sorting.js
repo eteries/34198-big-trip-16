@@ -1,8 +1,7 @@
 import { SORTINGS } from '../constants';
+import { createElement } from '../utils/dom';
 
-const activeSorting = SORTINGS[3];
-
-const createSortingListTemplate = () => (
+const createSortingListTemplate = (activeSorting) => (
   SORTINGS
     .map((name) => {
       const checked = name === activeSorting ? 'checked': '';
@@ -18,11 +17,32 @@ const createSortingListTemplate = () => (
     .join('')
 );
 
-export const createSortingTemplate = () => {
-  const sortingListTemplate = createSortingListTemplate();
+const createSortingTemplate = (activeSorting) => {
+  const sortingListTemplate = createSortingListTemplate(activeSorting);
   return (
     `<form class="trip-events__trip-sort  trip-sort" action="#" method="get">
       ${sortingListTemplate}
     </form>`
   );
 };
+
+export default class Sorting {
+  #element = null;
+  #activeSorting = SORTINGS[3];
+
+  get element() {
+    if (!this.#element) {
+      this.#element = createElement(this.template);
+    }
+
+    return this.#element;
+  }
+
+  get template() {
+    return createSortingTemplate(this.#activeSorting);
+  }
+
+  removeElement() {
+    this.#element = null;
+  }
+}
