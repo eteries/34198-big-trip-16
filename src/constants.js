@@ -15,11 +15,17 @@ export const TABS = [
   'Stats'
 ];
 
-export const FILTERS = [
-  'everything',
-  'future',
-  'past',
-];
+export const Filters = {
+  Everything: 'everything',
+  Future: 'future',
+  Past: 'past',
+};
+
+export const Messages = {
+  [Filters.Everything]: 'Click New Event to create your first point',
+  [Filters.Past]: 'There are no past events now',
+  [Filters.Future]: 'There are no future events now',
+};
 
 export const SORTINGS = [
   'day',

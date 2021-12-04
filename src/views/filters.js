@@ -1,8 +1,8 @@
-import { FILTERS } from '../constants';
+import { Filters as FilterNames } from '../constants';
 import { createElement } from '../utils/dom';
 
 const createFiltersListTemplate = (activeFilter) => (
-  FILTERS
+  Object.values(FilterNames)
     .map((name) => (
       `<div class="trip-filters__filter">
         <input id="filter-${name}" class="trip-filters__filter-input  visually-hidden" type="radio" name="trip-filter" value="${name}" ${activeFilter === name ? 'checked' : ''}>
@@ -17,15 +17,18 @@ const createFiltersTemplate = (activeFilter) => {
 
   return (
     `<form class="trip-filters" action="#" method="get">
-      ${filtersListTemplate}
-    <button class="visually-hidden" type="submit">Accept filter</button>
-  </form>`
+       ${filtersListTemplate}
+      <button class="visually-hidden" type="submit">Accept filter</button>
+    </form>`
   );
 };
 
 export default class Filters {
   #element = null;
-  #activeFilter = FILTERS[0];
+
+  constructor(activeFilter) {
+    this.activeFilter = activeFilter;
+  }
 
   get element() {
     if (!this.#element) {
@@ -36,7 +39,7 @@ export default class Filters {
   }
 
   get template() {
-    return createFiltersTemplate(this.#activeFilter);
+    return createFiltersTemplate(this.activeFilter);
   }
 
   removeElement() {
