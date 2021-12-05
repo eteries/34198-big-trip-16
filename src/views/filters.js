@@ -1,5 +1,5 @@
 import { Filters as FilterNames } from '../constants';
-import { createElement } from '../utils/dom';
+import AbstractView from './abstract-view';
 
 const createFiltersListTemplate = (activeFilter) => (
   Object.values(FilterNames)
@@ -23,26 +23,13 @@ const createFiltersTemplate = (activeFilter) => {
   );
 };
 
-export default class Filters {
-  #element = null;
-
+export default class Filters extends AbstractView {
   constructor(activeFilter) {
+    super();
     this.activeFilter = activeFilter;
-  }
-
-  get element() {
-    if (!this.#element) {
-      this.#element = createElement(this.template);
-    }
-
-    return this.#element;
   }
 
   get template() {
     return createFiltersTemplate(this.activeFilter);
-  }
-
-  removeElement() {
-    this.#element = null;
   }
 }

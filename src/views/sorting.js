@@ -1,5 +1,5 @@
 import { SORTINGS } from '../constants';
-import { createElement } from '../utils/dom';
+import AbstractView from './abstract-view';
 
 const createSortingListTemplate = (activeSorting) => (
   SORTINGS
@@ -26,23 +26,10 @@ const createSortingTemplate = (activeSorting) => {
   );
 };
 
-export default class Sorting {
-  #element = null;
+export default class Sorting extends AbstractView {
   #activeSorting = SORTINGS[3];
-
-  get element() {
-    if (!this.#element) {
-      this.#element = createElement(this.template);
-    }
-
-    return this.#element;
-  }
 
   get template() {
     return createSortingTemplate(this.#activeSorting);
-  }
-
-  removeElement() {
-    this.#element = null;
   }
 }

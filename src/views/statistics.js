@@ -1,5 +1,5 @@
-import { createElement } from '../utils/dom';
 import { STATISTICS } from '../constants';
+import AbstractView from './abstract-view';
 
 const createStatisticsListTemplate = () => (
   STATISTICS
@@ -11,7 +11,6 @@ const createStatisticsListTemplate = () => (
     .join('')
 );
 
-
 const createStatisticsTemplate = () => {
   const statisticsListTemplate = createStatisticsListTemplate();
   return (
@@ -22,22 +21,8 @@ const createStatisticsTemplate = () => {
   );
 };
 
-export default class Statistics {
-  #element = null;
-
-  get element() {
-    if (!this.#element) {
-      this.#element = createElement(this.template);
-    }
-
-    return this.#element;
-  }
-
+export default class Statistics extends AbstractView {
   get template() {
     return createStatisticsTemplate();
-  }
-
-  removeElement() {
-    this.#element = null;
   }
 }

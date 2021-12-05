@@ -1,5 +1,5 @@
 import { TABS } from '../constants';
-import { createElement } from '../utils/dom';
+import AbstractView from './abstract-view';
 
 const createTabsTemplate = (activeTab) => (
   TABS
@@ -21,23 +21,10 @@ const createNavigationTemplate = (activeTab) => {
   );
 };
 
-export default class Navigation {
-  #element = null;
+export default class Navigation extends AbstractView {
   #activeTab = TABS[0];
-
-  get element() {
-    if (!this.#element) {
-      this.#element = createElement(this.template);
-    }
-
-    return this.#element;
-  }
 
   get template() {
     return createNavigationTemplate(this.#activeTab);
-  }
-
-  removeElement() {
-    this.#element = null;
   }
 }
