@@ -21,10 +21,6 @@ const renderPoint = (container, point) => {
   const pointComponent = new PointView(point);
   const pointEditComponent = new PointEditView(point);
 
-  const openButton = pointComponent.element.querySelector('.event__rollup-btn');
-  const closeButton = pointEditComponent.element.querySelector('.event__rollup-btn');
-  const editForm = pointEditComponent.element.querySelector('.event--edit');
-
   const openEditor = () => {
     pointComponent.element.replaceWith(pointEditComponent.element);
   };
@@ -36,21 +32,21 @@ const renderPoint = (container, point) => {
   const onDocumentKeyDown = (evt) => {
     if (isEscape(evt)) {
       closeEditor();
+      document.removeEventListener('keydown', onDocumentKeyDown);
     }
   };
 
-  openButton.addEventListener('click', () => {
+  pointComponent.setOpenClickHandler(() => {
     openEditor();
     document.addEventListener('keydown', onDocumentKeyDown);
   });
 
-  closeButton.addEventListener('click', () => {
+  pointEditComponent.setCloseClickHandler(() => {
     closeEditor();
     document.removeEventListener('keydown', onDocumentKeyDown);
   });
 
-  editForm.addEventListener('submit', (evt) => {
-    evt.preventDefault();
+  pointEditComponent.setSubmitHandler(() => {
     closeEditor();
     document.removeEventListener('keydown', onDocumentKeyDown);
   });

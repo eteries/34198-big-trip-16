@@ -2,6 +2,7 @@ import { createElement } from '../utils/dom';
 
 export default class AbstractView {
   #element = null;
+  _handlers = {};
 
   constructor() {
     if (new.target === AbstractView) {
