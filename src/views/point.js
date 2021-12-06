@@ -1,5 +1,5 @@
 import { getDuration, formatPointDuration, formatDate } from '../utils/date.js';
-import { createElement } from '../utils/dom';
+import AbstractView from './abstract-view';
 
 const createOfferItemTemplate = ({title, price}) => (
   `<li class="event__offer">
@@ -70,26 +70,19 @@ const createPointTemplate = (point) => {
   );
 };
 
-export default class Point {
-  #element = null;
-
+export default class Point extends AbstractView {
   constructor(point) {
+    super();
     this.point = point;
-  }
-
-  get element() {
-    if (!this.#element) {
-      this.#element = createElement(this.template);
-    }
-
-    return this.#element;
   }
 
   get template() {
     return createPointTemplate(this.point);
   }
 
-  removeElement() {
-    this.#element = null;
+  setOpenClickHandler(cb) {
+    this._handlers.onOpenClick = cb;
+    const openButton = this.element.querySelector('.event__rollup-btn');
+    openButton.addEventListener('click', this._handlers.onOpenClick);
   }
 }

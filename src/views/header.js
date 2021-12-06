@@ -1,23 +1,9 @@
-import { createElement } from '../utils/dom';
+import AbstractView from './abstract-view';
 
 const createHeaderTemplate = () => '<section class="trip-main__trip-info  trip-info"></section>';
 
-export default class Header {
-  #element = null;
-
-  get element() {
-    if (!this.#element) {
-      this.#element = createElement(this.template);
-    }
-
-    return this.#element;
-  }
-
+export default class Header extends AbstractView {
   get template() {
     return createHeaderTemplate();
-  }
-
-  removeElement() {
-    this.#element = null;
   }
 }

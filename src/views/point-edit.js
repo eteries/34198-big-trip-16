@@ -2,8 +2,8 @@ import { POINT_TYPES } from '../constants.js';
 import { destinations } from '../mocks/destinations.js';
 import { offers as availableOffers } from '../mocks/offers.js';
 import { formatDate, getToday } from '../utils/date.js';
-import { createElement } from '../utils/dom';
 import { getOffersByType } from '../utils/calculate';
+import AbstractView from './abstract-view';
 
 const createPointTypeTemplate = (type, currentType) => {
   const checked = type === currentType ? 'checked' : '';
@@ -152,27 +152,31 @@ const createPointEditTemplate = (point = {}) => {
   );
 };
 
-export default class PointEdit {
-  #element = null;
-
+export default class PointEdit extends AbstractView {
   constructor(point) {
+    super();
     this.point = point;
-  }
-
-  get element() {
-    if (!this.#element) {
-      this.#element = createElement(this.template);
-    }
-
-    return this.#element;
   }
 
   get template() {
     return createPointEditTemplate(this.point);
   }
 
-  removeElement() {
-    this.#element = null;
+  setCloseClickHandler(cb) {
+    this._handlers.onCloseClick = cb;
+    const closeButton = this.element.querySelector('.event__rollup-btn');
+    closeButton.addEventListener('click', this._handlers.onCloseClick);
+  }
+
+  setSubmitHandler(cb) {
+    this._handlers.onSubmit = cb;
+    const editForm = this.element.querySelector('.event--edit');
+    editForm.addEventListener('click', this.#onSubmit);
+  }
+
+  #onSubmit = (evt) => {
+    evt.preventDefault();
+    this._handlers.onSubmit();
   }
 }
 

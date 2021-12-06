@@ -12,7 +12,7 @@ import SortingView from './views/sorting.js';
 import EmptyView from './views/empty';
 
 import { generatePoint } from './mocks/point';
-import { isEscape, Positions, renderElement } from './utils/dom';
+import { isEscape, Positions, render } from './utils/dom';
 import { getDifference } from './utils/date';
 import { calculateCost, calculateTripEnd, calculateTripStart, getUniqueDestinations } from './utils/calculate';
 import { Filters, RENDERED_EVENTS_NUMBER } from './constants';
@@ -20,10 +20,6 @@ import { Filters, RENDERED_EVENTS_NUMBER } from './constants';
 const renderPoint = (container, point) => {
   const pointComponent = new PointView(point);
   const pointEditComponent = new PointEditView(point);
-
-  const openButton = pointComponent.element.querySelector('.event__rollup-btn');
-  const closeButton = pointEditComponent.element.querySelector('.event__rollup-btn');
-  const editForm = pointEditComponent.element.querySelector('.event--edit');
 
   const openEditor = () => {
     pointComponent.element.replaceWith(pointEditComponent.element);
@@ -36,26 +32,26 @@ const renderPoint = (container, point) => {
   const onDocumentKeyDown = (evt) => {
     if (isEscape(evt)) {
       closeEditor();
+      document.removeEventListener('keydown', onDocumentKeyDown);
     }
   };
 
-  openButton.addEventListener('click', () => {
+  pointComponent.setOpenClickHandler(() => {
     openEditor();
     document.addEventListener('keydown', onDocumentKeyDown);
   });
 
-  closeButton.addEventListener('click', () => {
+  pointEditComponent.setCloseClickHandler(() => {
     closeEditor();
     document.removeEventListener('keydown', onDocumentKeyDown);
   });
 
-  editForm.addEventListener('submit', (evt) => {
-    evt.preventDefault();
+  pointEditComponent.setSubmitHandler(() => {
     closeEditor();
     document.removeEventListener('keydown', onDocumentKeyDown);
   });
 
-  renderElement(container, pointComponent.element, Positions.BEFORE_END);
+  render(container, pointComponent.element, Positions.BEFORE_END);
 };
 
 const renderTrip = (points) => {
@@ -66,25 +62,27 @@ const renderTrip = (points) => {
   const activeFilter = Filters.Everything;
 
   const tripMainElement = document.querySelector('.trip-main');
-  const controlsElement = tripMainElement.querySelector('.trip-controls');
+  const navigationElement = tripMainElement.querySelector('.trip-controls__navigation');
+  const filtersElement = tripMainElement.querySelector('.trip-controls__filters');
   const pageTripEventsElement = document.querySelector('.trip-events');
-  renderElement(controlsElement, new NavigationView().element, Positions.BEFORE_END);
-  renderElement(controlsElement, new FiltersView(activeFilter).element, Positions.BEFORE_END);
-  renderElement(pageTripEventsElement, new StatisticsView().element, Positions.AFTER_END);
+
+  render(navigationElement, new NavigationView(), Positions.BEFORE_END);
+  render(filtersElement, new FiltersView(activeFilter), Positions.BEFORE_END);
+  render(pageTripEventsElement, new StatisticsView(), Positions.AFTER_END);
 
   if (!points.length) {
-    renderElement(pageTripEventsElement, new EmptyView(activeFilter).element, Positions.BEFORE_END);
+    render(pageTripEventsElement, new EmptyView(activeFilter), Positions.BEFORE_END);
     return;
   }
 
-  renderElement(tripMainElement, new HeaderView().element, Positions.AFTER_BEGIN);
+  const headerComponent = new HeaderView();
 
-  const headerElement = tripMainElement.querySelector('.trip-info');
-  renderElement(headerElement, new RouteView(uniqueDestinations, startDate, endDate).element, Positions.BEFORE_END);
-  renderElement(headerElement, new CostView(cost).element, Positions.BEFORE_END);
-  renderElement(pageTripEventsElement, new SortingView().element, Positions.BEFORE_END);
-  renderElement(pageTripEventsElement, new PointsView().element, Positions.BEFORE_END);
-  renderElement(pageTripEventsElement, new LoadingView().element, Positions.BEFORE_END);
+  render(tripMainElement, headerComponent, Positions.AFTER_BEGIN);
+  render(headerComponent, new RouteView(uniqueDestinations, startDate, endDate), Positions.BEFORE_END);
+  render(headerComponent, new CostView(cost), Positions.BEFORE_END);
+  render(pageTripEventsElement, new SortingView(), Positions.BEFORE_END);
+  render(pageTripEventsElement, new PointsView(), Positions.BEFORE_END);
+  render(pageTripEventsElement, new LoadingView(), Positions.BEFORE_END);
 
   const pageEventListElement = pageTripEventsElement.querySelector('.trip-events__list');
   points
