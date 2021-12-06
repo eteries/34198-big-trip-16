@@ -1,3 +1,5 @@
+import AbstractView from '../views/abstract-view';
+
 const Positions = {
   BEFORE_BEGIN: 'beforebegin',
   AFTER_BEGIN: 'afterbegin',
@@ -12,10 +14,17 @@ const createElement = (template) => {
   return wrapper.firstChild;
 };
 
-const renderElement = (container, element, position) => {
-  container.insertAdjacentElement(position, element);
+const render = (parent, child, position) => {
+  const parentElement = parent instanceof AbstractView
+    ? parent.element
+    : parent;
+  const childElement = child instanceof AbstractView
+    ? child.element
+    : child;
+
+  parentElement.insertAdjacentElement(position, childElement);
 };
 
 const isEscape = (evt) => evt.key === 'Escape' || evt.key === 'Esc';
 
-export { Positions, createElement, renderElement, isEscape };
+export { Positions, createElement, render, isEscape };
