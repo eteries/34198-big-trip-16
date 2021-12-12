@@ -18,76 +18,11 @@ import { calculateCost, calculateTripEnd, calculateTripStart, getUniqueDestinati
 import { Filters, RENDERED_EVENTS_NUMBER } from './constants';
 
 const renderPoint = (container, point) => {
-  const pointComponent = new PointView(point);
-  const pointEditComponent = new PointEditView(point);
 
-  const openEditor = () => {
-    pointComponent.element.replaceWith(pointEditComponent.element);
-  };
-
-  const closeEditor = () => {
-    pointEditComponent.element.replaceWith(pointComponent.element);
-  };
-
-  const onDocumentKeyDown = (evt) => {
-    if (isEscape(evt)) {
-      closeEditor();
-      document.removeEventListener('keydown', onDocumentKeyDown);
-    }
-  };
-
-  pointComponent.setOpenClickHandler(() => {
-    openEditor();
-    document.addEventListener('keydown', onDocumentKeyDown);
-  });
-
-  pointEditComponent.setCloseClickHandler(() => {
-    closeEditor();
-    document.removeEventListener('keydown', onDocumentKeyDown);
-  });
-
-  pointEditComponent.setSubmitHandler(() => {
-    closeEditor();
-    document.removeEventListener('keydown', onDocumentKeyDown);
-  });
-
-  render(container, pointComponent.element, Positions.BEFORE_END);
 };
 
 const renderTrip = (points) => {
-  const cost = calculateCost(points);
-  const uniqueDestinations = getUniqueDestinations(points);
-  const startDate = calculateTripStart(points);
-  const endDate = calculateTripEnd(points);
-  const activeFilter = Filters.Everything;
 
-  const tripMainElement = document.querySelector('.trip-main');
-  const navigationElement = tripMainElement.querySelector('.trip-controls__navigation');
-  const filtersElement = tripMainElement.querySelector('.trip-controls__filters');
-  const pageTripEventsElement = document.querySelector('.trip-events');
-
-  render(navigationElement, new NavigationView(), Positions.BEFORE_END);
-  render(filtersElement, new FiltersView(activeFilter), Positions.BEFORE_END);
-  render(pageTripEventsElement, new StatisticsView(), Positions.AFTER_END);
-
-  if (!points.length) {
-    render(pageTripEventsElement, new EmptyView(activeFilter), Positions.BEFORE_END);
-    return;
-  }
-
-  const headerComponent = new HeaderView();
-
-  render(tripMainElement, headerComponent, Positions.AFTER_BEGIN);
-  render(headerComponent, new RouteView(uniqueDestinations, startDate, endDate), Positions.BEFORE_END);
-  render(headerComponent, new CostView(cost), Positions.BEFORE_END);
-  render(pageTripEventsElement, new SortingView(), Positions.BEFORE_END);
-  render(pageTripEventsElement, new PointsView(), Positions.BEFORE_END);
-  render(pageTripEventsElement, new LoadingView(), Positions.BEFORE_END);
-
-  const pageEventListElement = pageTripEventsElement.querySelector('.trip-events__list');
-  points
-    .sort(((pointA, pointB) => getDifference(pointA.dateFrom, pointB.dateFrom)))
-    .forEach((point) => renderPoint(pageEventListElement, point));
 };
 
 const tripPoints = new Array(RENDERED_EVENTS_NUMBER)
