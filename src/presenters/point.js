@@ -21,7 +21,7 @@ export default class Point {
     });
 
     this._pointEditComponent.setSubmitHandler(() => {
-      this._closeEditor();
+      this.#closeEditor();
       document.removeEventListener('keydown', this.#onDocumentKeyDown);
     });
   }
