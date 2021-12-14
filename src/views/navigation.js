@@ -15,9 +15,12 @@ const createTabsTemplate = (activeTab) => (
 const createNavigationTemplate = (activeTab) => {
   const tabsTemplate = createTabsTemplate(activeTab);
   return (
-    `<nav class="trip-controls__trip-tabs trip-tabs">
-      ${tabsTemplate}
-    </nav>`
+    `<div class="trip-controls__navigation">
+      <h2 class="visually-hidden">Switch trip view</h2>
+      <nav class="trip-controls__trip-tabs trip-tabs">
+        ${tabsTemplate}
+      </nav>
+     </div>`
   );
 };
 

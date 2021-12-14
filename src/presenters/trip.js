@@ -11,23 +11,24 @@ import CostView from '../views/cost';
 import SortingView from '../views/sorting';
 import PointsView from '../views/points';
 import LoadingView from '../views/loading';
+import NewButtonView from '../views/new-button';
 import { getDifference } from '../utils/date';
 import Point from './point';
 
 export default class Trip {
   #points;
+  #controlsElement
+  #pointsElement
   #headerComponent;
-  #tripMainElement;
-  #pageTripEventsElement;
   #activeFilter = Filters.Everything;
 
   constructor(points) {
     this.#points = points;
   }
 
-  init() {
-    this.#tripMainElement = document.querySelector('.trip-main');
-    this.#pageTripEventsElement = document.querySelector('.trip-events');
+  init(controlsContainer, pointsContainer) {
+    this.#controlsElement = controlsContainer;
+    this.#pointsElement = pointsContainer;
 
     this.#renderNavigation();
     this.#renderFilters();
@@ -42,26 +43,28 @@ export default class Trip {
   }
 
   #renderNavigation = () => {
-    const navigationElement = this.#tripMainElement.querySelector('.trip-controls__navigation');
-    render(navigationElement, new NavigationView(), Positions.BEFORE_END);
+    render(this.#controlsElement, new NavigationView(), Positions.BEFORE_END);
   }
 
   #renderFilters = () => {
-    const filtersElement = this.#tripMainElement.querySelector('.trip-controls__filters');
-    render(filtersElement, new FiltersView(this.#activeFilter), Positions.BEFORE_END);
+    render(this.#controlsElement, new FiltersView(this.#activeFilter), Positions.BEFORE_END);
   }
 
   #renderStatistics = () => {
-    render(this.#pageTripEventsElement, new StatisticsView(), Positions.AFTER_END);
+    render(this.#pointsElement, new StatisticsView(), Positions.AFTER_END);
   }
 
   #renderEmptyTrip = () => {
-    render(this.#pageTripEventsElement, new EmptyView(this.#activeFilter), Positions.BEFORE_END);
+    render(this.#pointsElement, new EmptyView(this.#activeFilter), Positions.BEFORE_END);
   }
 
   #renderHeader = () => {
     this.#headerComponent = new HeaderView();
-    render(this.#tripMainElement, this.#headerComponent, Positions.AFTER_BEGIN);
+    render(this.#controlsElement, this.#headerComponent, Positions.BEFORE_BEGIN);
+  }
+
+  #renderNewButton = () => {
+    render(this.#controlsElement, new NewButtonView(), Positions.AFTER_END);
   }
 
   #renderRoute = () => {
@@ -77,15 +80,15 @@ export default class Trip {
   }
 
   #renderSorting = () => {
-    render(this.#pageTripEventsElement, new SortingView(), Positions.BEFORE_END);
+    render(this.#pointsElement, new SortingView(), Positions.BEFORE_END);
   }
 
   #renderLoading = () => {
-    render(this.#pageTripEventsElement, new LoadingView(), Positions.BEFORE_END);
+    render(this.#pointsElement, new LoadingView(), Positions.BEFORE_END);
   }
 
   #renderPointsList = () => {
-    render(this.#pageTripEventsElement, new PointsView(), Positions.BEFORE_END);
+    render(this.#pointsElement, new PointsView(), Positions.BEFORE_END);
   }
 
   #renderContent = () => {
@@ -95,8 +98,9 @@ export default class Trip {
     this.#renderSorting();
     this.#renderPointsList();
     this.#renderLoading();
+    this.#renderNewButton();
 
-    const pageEventListElement = this.#pageTripEventsElement.querySelector('.trip-events__list');
+    const pageEventListElement = this.#pointsElement.querySelector('.trip-events__list');
     this.#points
       .sort(((pointA, pointB) => getDifference(pointA.dateFrom, pointB.dateFrom)))
       .forEach((point) => {
