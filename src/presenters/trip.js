@@ -1,9 +1,5 @@
 import { calculateCost, calculateTripEnd, calculateTripStart, getUniqueDestinations } from '../utils/calculate';
-import { Filters } from '../constants';
 import { Positions, render } from '../utils/dom';
-import NavigationView from '../views/navigation';
-import FiltersView from '../views/filters';
-import StatisticsView from '../views/statistics';
 import EmptyView from '../views/empty';
 import HeaderView from '../views/header';
 import RouteView from '../views/route';
@@ -17,22 +13,20 @@ import Point from './point';
 
 export default class Trip {
   #points;
-  #controlsElement
-  #pointsElement
+  #controlsElement;
+  #pointsElement;
+  #pointsListComponent;
   #headerComponent;
-  #activeFilter = Filters.Everything;
+  #activeFilter;
 
-  constructor(points) {
+  constructor(points, activeFilter) {
     this.#points = points;
+    this.#activeFilter = activeFilter;
   }
 
   init(controlsContainer, pointsContainer) {
     this.#controlsElement = controlsContainer;
     this.#pointsElement = pointsContainer;
-
-    this.#renderNavigation();
-    this.#renderFilters();
-    this.#renderStatistics();
 
     if (!this.#points.length) {
       this.#renderEmptyTrip();
@@ -40,18 +34,6 @@ export default class Trip {
     }
 
     this.#renderContent();
-  }
-
-  #renderNavigation = () => {
-    render(this.#controlsElement, new NavigationView(), Positions.BEFORE_END);
-  }
-
-  #renderFilters = () => {
-    render(this.#controlsElement, new FiltersView(this.#activeFilter), Positions.BEFORE_END);
-  }
-
-  #renderStatistics = () => {
-    render(this.#pointsElement, new StatisticsView(), Positions.AFTER_END);
   }
 
   #renderEmptyTrip = () => {
@@ -88,7 +70,8 @@ export default class Trip {
   }
 
   #renderPointsList = () => {
-    render(this.#pointsElement, new PointsView(), Positions.BEFORE_END);
+    this.#pointsListComponent = new PointsView();
+    render(this.#pointsElement, this.#pointsListComponent, Positions.BEFORE_END);
   }
 
   #renderContent = () => {
@@ -100,13 +83,10 @@ export default class Trip {
     this.#renderLoading();
     this.#renderNewButton();
 
-    const pageEventListElement = this.#pointsElement.querySelector('.trip-events__list');
     this.#points
       .sort(((pointA, pointB) => getDifference(pointA.dateFrom, pointB.dateFrom)))
       .forEach((point) => {
-        const newPoint = new Point(pageEventListElement, point);
-        newPoint.init();
-        newPoint.renderPoint();
+        new Point(this.#pointsListComponent, point).init();
       });
   }
 }
