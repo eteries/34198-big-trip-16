@@ -6,17 +6,33 @@ export default class Point {
   #container;
   #pointComponent;
   #pointEditComponent;
+  #toggleFavorite;
+  #point;
 
-  constructor(container, point) {
+  constructor(container, toggleFavorites) {
     this.#container = container;
-    this.#pointComponent = new PointView(point);
-    this.#pointEditComponent = new PointEditView(point);
+    this.#toggleFavorite = toggleFavorites;
   }
 
-  init() {
+  init(point) {
+    const prevPointComponent = this.#pointComponent;
+    const prevPointEditComponent = this.#pointEditComponent;
+
+    this.#pointComponent = new PointView(point);
+    this.#pointEditComponent = new PointEditView(point);
+    this.#point = point;
+
     this.#pointComponent.setOpenClickHandler(() => {
       this.#openEditor();
       document.addEventListener('keydown', this.#onDocumentKeyDown);
+    });
+
+    this.#pointComponent.setFavoriteClickHandler(() => {
+      this.updatedPoint = {
+        ...this.#point,
+        isFavorite: !this.#point.isFavorite
+      };
+      this.#toggleFavorite(this.updatedPoint);
     });
 
     this.#pointEditComponent.setCloseClickHandler(() => {
@@ -29,7 +45,16 @@ export default class Point {
       document.removeEventListener('keydown', this.#onDocumentKeyDown);
     });
 
-    this.#renderPoint();
+    if (!prevPointComponent || !prevPointEditComponent) {
+      this.#renderPoint();
+      return;
+    }
+
+    prevPointComponent.element.replaceWith(this.#pointComponent.element);
+    prevPointEditComponent.element.replaceWith(this.#pointEditComponent.element);
+
+    prevPointComponent.removeElement();
+    prevPointEditComponent.removeElement();
   }
 
   #renderPoint = () => {

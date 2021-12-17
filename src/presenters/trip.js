@@ -18,10 +18,12 @@ export default class Trip {
   #pointsListComponent;
   #headerComponent;
   #activeFilter;
+  #pointPresenters;
 
   constructor(points, activeFilter) {
     this.#points = points;
     this.#activeFilter = activeFilter;
+    this.#pointPresenters = {};
   }
 
   init(controlsContainer, pointsContainer) {
@@ -34,6 +36,16 @@ export default class Trip {
     }
 
     this.#renderContent();
+  }
+
+  #updatePoint = (updatedPoint, points) => {
+    const index = points.findIndex(({id}) => id === updatedPoint.id);
+    return [points.slice(0, index - 1), updatedPoint, points.slice(index + 1, points.length - 1)];
+  }
+
+  #toggleFavorites = (updatedPoint) => {
+    this.#updatePoint(updatedPoint, this.#points);
+    this.#pointPresenters[updatedPoint.id].init(updatedPoint);
   }
 
   #renderEmptyTrip = () => {
@@ -86,7 +98,9 @@ export default class Trip {
     this.#points
       .sort(((pointA, pointB) => getDifference(pointA.dateFrom, pointB.dateFrom)))
       .forEach((point) => {
-        new Point(this.#pointsListComponent, point).init();
+        const pointPresenter = new Point(this.#pointsListComponent, this.#toggleFavorites);
+        pointPresenter.init(point);
+        this.#pointPresenters[point.id] = pointPresenter;
       });
   }
 }
