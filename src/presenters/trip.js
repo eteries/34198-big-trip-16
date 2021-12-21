@@ -23,7 +23,7 @@ export default class Trip {
   constructor(points, activeFilter) {
     this.#points = points;
     this.#activeFilter = activeFilter;
-    this.#pointPresenters = {};
+    this.#pointPresenters = new Map();
   }
 
   init(controlsContainer, pointsContainer) {
@@ -45,7 +45,7 @@ export default class Trip {
 
   #toggleFavorites = (updatedPoint) => {
     this.#updatePoint(updatedPoint, this.#points);
-    this.#pointPresenters[updatedPoint.id].init(updatedPoint);
+    this.#pointPresenters.get(updatedPoint.id).init(updatedPoint);
   }
 
   #renderEmptyTrip = () => {
@@ -98,9 +98,18 @@ export default class Trip {
     this.#points
       .sort(((pointA, pointB) => getDifference(pointA.dateFrom, pointB.dateFrom)))
       .forEach((point) => {
-        const pointPresenter = new Point(this.#pointsListComponent, this.#toggleFavorites);
+        const pointPresenter = new Point(this.#pointsListComponent, this.#toggleFavorites, this.#resetPointsList);
         pointPresenter.init(point);
-        this.#pointPresenters[point.id] = pointPresenter;
+        this.#pointPresenters.set(point.id, pointPresenter);
       });
+  }
+
+  #resetPointsList = () => {
+    this.#pointPresenters.forEach((presenter) => presenter.reset());
+  }
+
+  #clearPointsList = () => {
+    this.#pointPresenters.forEach((presenter) => presenter.destroy());
+    this.#pointPresenters.clear();
   }
 }

@@ -1,17 +1,21 @@
 import PointView from '../views/point';
 import PointEditView from '../views/point-edit';
 import { isEscape, Positions, render } from '../utils/dom';
+import { Mode } from '../constants';
 
 export default class Point {
   #container;
   #pointComponent;
   #pointEditComponent;
   #toggleFavorite;
+  #onOpen;
   #point;
+  #mode = Mode.Closed;
 
-  constructor(container, toggleFavorites) {
+  constructor(container, toggleFavorites, onOpen) {
     this.#container = container;
     this.#toggleFavorite = toggleFavorites;
+    this.#onOpen = onOpen;
   }
 
   init(point) {
@@ -50,11 +54,27 @@ export default class Point {
       return;
     }
 
-    prevPointComponent.element.replaceWith(this.#pointComponent.element);
-    prevPointEditComponent.element.replaceWith(this.#pointEditComponent.element);
+    if (this.#mode === Mode.Open) {
+      prevPointComponent.element.replaceWith(this.#pointComponent.element);
+    }
+
+    if (this.#mode === Mode.Closed) {
+      prevPointEditComponent.element.replaceWith(this.#pointEditComponent.element);
+    }
 
     prevPointComponent.removeElement();
     prevPointEditComponent.removeElement();
+  }
+
+  reset() {
+    if (this.#mode !== Mode.Closed) {
+      this.#closeEditor();
+    }
+  }
+
+  destroy() {
+    this.#pointComponent.removeElement();
+    this.#pointEditComponent.removeElement();
   }
 
   #renderPoint = () => {
@@ -63,10 +83,13 @@ export default class Point {
 
   #openEditor = () => {
     this.#pointComponent.element.replaceWith(this.#pointEditComponent.element);
+    this.#onOpen();
+    this.#mode = Mode.Open;
   };
 
   #closeEditor = () => {
     this.#pointEditComponent.element.replaceWith(this.#pointComponent.element);
+    this.#mode = Mode.Closed;
   };
 
   #onDocumentKeyDown = (evt) => {
