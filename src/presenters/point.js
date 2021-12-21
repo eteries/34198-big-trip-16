@@ -7,14 +7,14 @@ export default class Point {
   #container;
   #pointComponent;
   #pointEditComponent;
-  #toggleFavorite;
+  #onUpdate;
   #onOpen;
   #point;
   #mode = Mode.Closed;
 
-  constructor(container, toggleFavorites, onOpen) {
+  constructor(container, onUpdate, onOpen) {
     this.#container = container;
-    this.#toggleFavorite = toggleFavorites;
+    this.#onUpdate = onUpdate;
     this.#onOpen = onOpen;
   }
 
@@ -32,11 +32,7 @@ export default class Point {
     });
 
     this.#pointComponent.setFavoriteClickHandler(() => {
-      this.updatedPoint = {
-        ...this.#point,
-        isFavorite: !this.#point.isFavorite
-      };
-      this.#toggleFavorite(this.updatedPoint);
+      this.#toggleFavorites();
     });
 
     this.#pointEditComponent.setCloseClickHandler(() => {
@@ -54,11 +50,11 @@ export default class Point {
       return;
     }
 
-    if (this.#mode === Mode.Open) {
+    if (this.#mode === Mode.Closed) {
       prevPointComponent.element.replaceWith(this.#pointComponent.element);
     }
 
-    if (this.#mode === Mode.Closed) {
+    if (this.#mode === Mode.Open) {
       prevPointEditComponent.element.replaceWith(this.#pointEditComponent.element);
     }
 
@@ -90,6 +86,14 @@ export default class Point {
   #closeEditor = () => {
     this.#pointEditComponent.element.replaceWith(this.#pointComponent.element);
     this.#mode = Mode.Closed;
+  };
+
+  #toggleFavorites = () => {
+    const updatedPoint = {
+      ...this.#point,
+      isFavorite: !this.#point.isFavorite
+    };
+    this.#onUpdate(updatedPoint);
   };
 
   #onDocumentKeyDown = (evt) => {

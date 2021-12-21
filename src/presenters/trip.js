@@ -10,6 +10,7 @@ import LoadingView from '../views/loading';
 import NewButtonView from '../views/new-button';
 import { getDifference } from '../utils/date';
 import Point from './point';
+import { updateItem } from '../utils/common';
 
 export default class Trip {
   #points;
@@ -36,16 +37,6 @@ export default class Trip {
     }
 
     this.#renderContent();
-  }
-
-  #updatePoint = (updatedPoint, points) => {
-    const index = points.findIndex(({id}) => id === updatedPoint.id);
-    return [points.slice(0, index - 1), updatedPoint, points.slice(index + 1, points.length - 1)];
-  }
-
-  #toggleFavorites = (updatedPoint) => {
-    this.#updatePoint(updatedPoint, this.#points);
-    this.#pointPresenters.get(updatedPoint.id).init(updatedPoint);
   }
 
   #renderEmptyTrip = () => {
@@ -98,10 +89,15 @@ export default class Trip {
     this.#points
       .sort(((pointA, pointB) => getDifference(pointA.dateFrom, pointB.dateFrom)))
       .forEach((point) => {
-        const pointPresenter = new Point(this.#pointsListComponent, this.#toggleFavorites, this.#resetPointsList);
+        const pointPresenter = new Point(this.#pointsListComponent, this.#updatePoints, this.#resetPointsList);
         pointPresenter.init(point);
         this.#pointPresenters.set(point.id, pointPresenter);
       });
+  }
+
+  #updatePoints = (updatedPoint) => {
+    updateItem(updatedPoint, this.#points);
+    this.#pointPresenters.get(updatedPoint.id).init(updatedPoint);
   }
 
   #resetPointsList = () => {

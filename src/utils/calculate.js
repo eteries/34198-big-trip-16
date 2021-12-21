@@ -16,4 +16,4 @@ const calculateTripEnd = (points) => (
 const getOffersByType = (offers, type) => offers
   .filter((offer) => offer.type === type || offer.type === 'mock')[0].offers;
 
-export { calculateCost, getUniqueDestinations, calculateTripStart, calculateTripEnd, getOffersByType};
+export { calculateCost, getUniqueDestinations, calculateTripStart, calculateTripEnd, getOffersByType };

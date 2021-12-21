@@ -171,7 +171,7 @@ export default class PointEdit extends AbstractView {
   setSubmitHandler(cb) {
     this._handlers.onSubmit = cb;
     const editForm = this.element.querySelector('.event--edit');
-    editForm.addEventListener('click', this.#onSubmit);
+    editForm.addEventListener('submit', this.#onSubmit);
   }
 
   #onSubmit = (evt) => {
