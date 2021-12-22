@@ -16,10 +16,13 @@ const createFiltersTemplate = (activeFilter) => {
   const filtersListTemplate = createFiltersListTemplate(activeFilter);
 
   return (
-    `<form class="trip-filters" action="#" method="get">
-       ${filtersListTemplate}
-      <button class="visually-hidden" type="submit">Accept filter</button>
-    </form>`
+    `<div class="trip-controls__filters">
+      <h2 class="visually-hidden">Filter events</h2>
+      <form class="trip-filters" action="#" method="get">
+        ${filtersListTemplate}
+        <button class="visually-hidden" type="submit">Accept filter</button>
+      </form>
+     </div>`
   );
 };
 

@@ -42,3 +42,8 @@ export const STATISTICS = [
 ];
 
 export const RENDERED_EVENTS_NUMBER = 15;
+
+export const Mode = {
+  Closed: 'Closed',
+  Open: 'Open',
+};
