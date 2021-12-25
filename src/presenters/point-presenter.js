@@ -3,7 +3,7 @@ import PointEditView from '../views/point-edit';
 import { isEscape, Positions, render } from '../utils/dom';
 import { Mode } from '../constants';
 
-export default class Point {
+export default class PointPresenter {
   #container;
   #pointComponent;
   #pointEditComponent;

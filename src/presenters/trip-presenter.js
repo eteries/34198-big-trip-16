@@ -9,10 +9,10 @@ import PointsView from '../views/points';
 import LoadingView from '../views/loading';
 import NewButtonView from '../views/new-button';
 import { getDifference } from '../utils/date';
-import Point from './point';
+import PointPresenter from './point-presenter';
 import { updateItem } from '../utils/common';
 
-export default class Trip {
+export default class TripPresenter {
   #points;
   #controlsElement;
   #pointsElement;
@@ -89,7 +89,7 @@ export default class Trip {
     this.#points
       .sort(((pointA, pointB) => getDifference(pointA.dateFrom, pointB.dateFrom)))
       .forEach((point) => {
-        const pointPresenter = new Point(this.#pointsListComponent, this.#updatePoints, this.#resetPointsList);
+        const pointPresenter = new PointPresenter(this.#pointsListComponent, this.#updatePoints, this.#resetPointsList);
         pointPresenter.init(point);
         this.#pointPresenters.set(point.id, pointPresenter);
       });

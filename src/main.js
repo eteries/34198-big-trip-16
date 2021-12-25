@@ -1,6 +1,6 @@
 import { generatePoint } from './mocks/point';
 import { Filters, RENDERED_EVENTS_NUMBER } from './constants';
-import Trip from './presenters/trip';
+import TripPresenter from './presenters/trip-presenter';
 import { Positions, render } from './utils/dom';
 import NavigationView from './views/navigation';
 import FiltersView from './views/filters';
@@ -18,5 +18,5 @@ const tripPoints = new Array(RENDERED_EVENTS_NUMBER)
   .fill(null)
   .map(generatePoint);
 
-new Trip(tripPoints, activeFilter)
+new TripPresenter(tripPoints, activeFilter)
   .init(tripControlsElement, tripEventsElement);
