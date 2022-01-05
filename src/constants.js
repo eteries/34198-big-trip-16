@@ -30,7 +30,7 @@ export const Messages = {
 export const Sortings = {
   Day: 'day',
   Event: 'event',
-  Time: 'time',
+  Duration: 'time',
   Price: 'price',
   Offer: 'offer',
 };

@@ -25,6 +25,19 @@ const render = (parent, child, position) => {
   parentElement.insertAdjacentElement(position, childElement);
 };
 
+const remove = (component) => {
+  if (component === null) {
+    return;
+  }
+
+  if (!(component instanceof AbstractView)) {
+    throw new Error('Can remove only components');
+  }
+
+  component.element.remove();
+  component.removeElement();
+};
+
 const isEscape = (evt) => evt.key === 'Escape' || evt.key === 'Esc';
 
-export { Positions, createElement, render, isEscape };
+export { Positions, createElement, render, remove, isEscape };

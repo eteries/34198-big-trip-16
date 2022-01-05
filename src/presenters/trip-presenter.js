@@ -8,7 +8,7 @@ import SortingView from '../views/sorting';
 import PointsView from '../views/points';
 import LoadingView from '../views/loading';
 import NewButtonView from '../views/new-button';
-import { getDuration } from '../utils/date';
+import { getDuration, getUnixNum } from '../utils/date';
 import PointPresenter from './point-presenter';
 import { updateItem } from '../utils/common';
 import { Sortings } from '../constants';
@@ -21,7 +21,7 @@ export default class TripPresenter {
   #headerComponent;
   #activeFilter;
   #pointPresenters;
-  #activeSorting = Sortings[3];
+  #activeSorting;
 
   constructor(points, activeFilter) {
     this.#points = points;
@@ -68,7 +68,9 @@ export default class TripPresenter {
 
   #renderSorting = (sortingType) => {
     const sorting = new SortingView(sortingType);
-    sorting.setSortingChangeHandler((evt) => this.#renderSortedPoints(evt.target.dataset.key));
+    sorting.setSortingChangeHandler((evt) => {
+      this.#renderSortedPoints(evt.target.dataset.key);
+    });
     render(this.#pointsElement, sorting, Positions.BEFORE_END);
   }
 
@@ -82,7 +84,6 @@ export default class TripPresenter {
   }
 
   #renderPointsList= () => {
-    console.info(this.#points);
     this.#points
       .forEach((point) => {
         const pointPresenter = new PointPresenter(this.#pointsListComponent, this.#updatePoints, this.#resetPointsList);
@@ -97,9 +98,9 @@ export default class TripPresenter {
     this.#renderCost();
     this.#renderSorting(Sortings.Day);
     this.#renderNewButton();
-
     this.#renderPointsListContainer();
     this.#sortPoints(Sortings.Day);
+    this.#activeSorting = Sortings.Day;
     this.#renderPointsList();
 
     this.#renderLoading();
@@ -114,12 +115,12 @@ export default class TripPresenter {
     switch (sortType) {
       case Sortings.Day:
         this.#points
-          .sort(((pointA, pointB) => pointA.dateFrom.valueOf() - pointB.dateFrom.valueOf()));
+          .sort((pointA, pointB) => getUnixNum(pointA.dateFrom) - getUnixNum(pointB.dateFrom));
         return;
 
-      case Sortings.Time:
+      case Sortings.Duration:
         this.#points
-          .sort(((pointA, pointB) => getDuration(pointA.dateFrom, pointA.dateTo) - getDuration(pointB.dateFrom, pointB.dateTo)));
+          .sort((pointA, pointB) => getDuration(pointA.dateFrom, pointA.dateTo) - getDuration(pointB.dateFrom, pointB.dateTo));
         return;
 
       case Sortings.Price:
@@ -134,6 +135,7 @@ export default class TripPresenter {
     }
 
     this.#sortPoints(sortType);
+    this.#activeSorting = sortType;
     this.#clearPointsList();
     this.#renderPointsList();
   }

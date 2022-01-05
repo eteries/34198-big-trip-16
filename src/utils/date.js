@@ -51,4 +51,6 @@ const getDifference = (firstDate, secondDate) => dayjs(firstDate).diff(secondDat
 
 const getToday = () => dayjs().startOf('date').toISOString();
 
-export { getDuration, formatPointDuration, formatDate, addTimeInterval, subtractTimeInterval, getDifference, getToday, formatTripDuration };
+const getUnixNum = (date) => dayjs(date).unix();
+
+export { getDuration, formatPointDuration, formatDate, addTimeInterval, subtractTimeInterval, getDifference, getToday, formatTripDuration, getUnixNum };
