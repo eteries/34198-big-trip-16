@@ -1,3 +1,6 @@
+import { Sortings } from '../constants';
+import { getDuration, getUnixNum } from './date';
+
 const calculateCost = (points) => points.reduce((sum, current) => sum + current.basePrice, 0);
 
 const getUniqueDestinations = (points) => [...new Set(points.map(({destination = {}}) => destination.name))];
@@ -16,4 +19,22 @@ const calculateTripEnd = (points) => (
 const getOffersByType = (offers, type) => offers
   .filter((offer) => offer.type === type || offer.type === 'mock')[0].offers;
 
-export { calculateCost, getUniqueDestinations, calculateTripStart, calculateTripEnd, getOffersByType };
+const sortTripPoints = (points, sortType) => {
+  switch (sortType) {
+    case Sortings.Day:
+      return [...points].sort((pointA, pointB) => getUnixNum(pointA.dateFrom) - getUnixNum(pointB.dateFrom));
+
+    case Sortings.Duration:
+      return [...points].sort((pointA, pointB) => (
+        getDuration(pointA.dateFrom, pointA.dateTo) - getDuration(pointB.dateFrom, pointB.dateTo
+        )));
+
+    case Sortings.Price:
+      return [...points].sort(((pointA, pointB) => pointA.basePrice - pointB.basePrice));
+
+    default:
+      return points;
+  }
+};
+
+export { calculateCost, getUniqueDestinations, calculateTripStart, calculateTripEnd, getOffersByType, sortTripPoints };
