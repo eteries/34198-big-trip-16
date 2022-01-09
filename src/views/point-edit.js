@@ -1,9 +1,9 @@
 import { POINT_TYPES } from '../constants.js';
 import { destinations } from '../mocks/destinations.js';
 import { offers as availableOffers } from '../mocks/offers.js';
-import { formatDate, getToday } from '../utils/date.js';
 import { getOffersByType } from '../utils/calculate';
-import AbstractView from './abstract-view';
+import { convertPointToState } from '../utils/point';
+import SmartView from './smart-view';
 
 const createPointTypeTemplate = (type, currentType) => {
   const checked = type === currentType ? 'checked' : '';
@@ -57,25 +57,14 @@ const createPicturesTemplate = (pictures) => (
   pictures.map(({src, description}) => `<img class="event__photo" src="${src}" alt="${description}">`).join('')
 );
 
-const createPointEditTemplate = (point = {}) => {
-  const {
-    type = POINT_TYPES[0],
-    dateFrom = getToday(),
-    dateTo = getToday(),
-    basePrice = 0,
-    offers = [],
-    destination = destinations[0],
-  } = point;
-
+const createPointEditTemplate = (state) => {
+  const {type, dateFromValue, dateToValue, basePrice, offers, destination} = state;
   const {description: destinationDescription, pictures} = destination;
 
   const typesTemplate = createPointTypesTemplate(POINT_TYPES, type);
   const destinationsTemplate = createDestinationsTemplate();
   const offersTemplate = createOffersTemplate(offers, type);
   const picturesTemplate = createPicturesTemplate(pictures);
-
-  const dateFromValue = formatDate(dateFrom, 'DD/MM/YY HH:mm');
-  const dateToValue = formatDate(dateTo, 'DD/MM/YY HH:mm');
 
   return (
     `<li class="trip-events__item">
@@ -152,14 +141,15 @@ const createPointEditTemplate = (point = {}) => {
   );
 };
 
-export default class PointEdit extends AbstractView {
+export default class PointEdit extends SmartView {
   constructor(point) {
     super();
-    this.point = point;
+    this._state = convertPointToState(point);
+    this.#setInnerHandlers();
   }
 
   get template() {
-    return createPointEditTemplate(this.point);
+    return createPointEditTemplate(this._state);
   }
 
   setCloseClickHandler(cb) {
@@ -177,6 +167,23 @@ export default class PointEdit extends AbstractView {
   #onSubmit = (evt) => {
     evt.preventDefault();
     this._handlers.onSubmit();
+  }
+
+  #onTypeChange = (evt) => {
+    this.updateState({
+      type: evt.target.value,
+    });
+    this.updateElement();
+  }
+
+  _restoreHandlers = () => {
+    this.#setInnerHandlers();
+    this.setCloseClickHandler(this._handlers.onCloseClick);
+    this.setSubmitHandler(this._handlers.onSubmit);
+  }
+
+  #setInnerHandlers = () => {
+    this.element.querySelector('.event__type-group').addEventListener('change', this.#onTypeChange);
   }
 }
 
