@@ -1,9 +1,9 @@
 import PointView from '../views/point';
 import PointEditView from '../views/point-edit';
-import { isEscape, Positions, render } from '../utils/dom';
+import { isEscape, Positions, remove, render } from '../utils/dom';
 import { Mode } from '../constants';
 
-export default class Point {
+export default class PointPresenter {
   #container;
   #pointComponent;
   #pointEditComponent;
@@ -58,8 +58,8 @@ export default class Point {
       prevPointEditComponent.element.replaceWith(this.#pointEditComponent.element);
     }
 
-    prevPointComponent.removeElement();
-    prevPointEditComponent.removeElement();
+    remove(prevPointComponent);
+    remove(prevPointEditComponent);
   }
 
   reset() {
@@ -69,8 +69,8 @@ export default class Point {
   }
 
   destroy() {
-    this.#pointComponent.removeElement();
-    this.#pointEditComponent.removeElement();
+    remove(this.#pointComponent);
+    remove(this.#pointEditComponent);
   }
 
   #renderPoint = () => {

@@ -27,13 +27,13 @@ export const Messages = {
   [Filters.Future]: 'There are no future events now',
 };
 
-export const SORTINGS = [
-  'day',
-  'event',
-  'time',
-  'price',
-  'offer',
-];
+export const Sortings = {
+  Day: 'day',
+  Event: 'event',
+  Duration: 'time',
+  Price: 'price',
+  Offer: 'offer',
+};
 
 export const STATISTICS = [
   'money',

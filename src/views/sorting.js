@@ -1,15 +1,15 @@
-import { SORTINGS } from '../constants';
+import { Sortings } from '../constants';
 import AbstractView from './abstract-view';
 
 const createSortingListTemplate = (activeSorting) => (
-  SORTINGS
+  Object.values(Sortings)
     .map((name) => {
       const checked = name === activeSorting ? 'checked': '';
-      const disabled = (name === SORTINGS[1] || name === SORTINGS[4]) ? 'disabled' : '';
+      const disabled = (name === Sortings.Event || name === Sortings.Offer) ? 'disabled' : '';
 
       return (
         `<div class="trip-sort__item  trip-sort__item--${name}">
-          <input id="sort-${name}" class="trip-sort__input  visually-hidden" type="radio" name="trip-sort" value="sort-${name}" ${checked} ${disabled}>
+          <input id="sort-${name}" class="trip-sort__input  visually-hidden" type="radio" name="trip-sort" value="sort-${name}" ${checked} ${disabled} data-key="${name}">
           <label class="trip-sort__btn" for="sort-${name}">${name}</label>
         </div>`
       );
@@ -27,9 +27,19 @@ const createSortingTemplate = (activeSorting) => {
 };
 
 export default class Sorting extends AbstractView {
-  #activeSorting = SORTINGS[3];
+  #activeSorting;
+
+  constructor(activeSorting) {
+    super();
+    this.#activeSorting = activeSorting;
+  }
 
   get template() {
     return createSortingTemplate(this.#activeSorting);
+  }
+
+  setSortingChangeHandler(cb) {
+    this._handlers.onSortingChange = cb;
+    this.element.addEventListener('change', this._handlers.onSortingChange);
   }
 }

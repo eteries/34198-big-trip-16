@@ -1,4 +1,4 @@
-import { calculateCost, calculateTripEnd, calculateTripStart, getUniqueDestinations } from '../utils/calculate';
+import { calculateCost, calculateTripEnd, calculateTripStart, getUniqueDestinations, sortTripPoints } from '../utils/calculate';
 import { Positions, render } from '../utils/dom';
 import EmptyView from '../views/empty';
 import HeaderView from '../views/header';
@@ -8,11 +8,11 @@ import SortingView from '../views/sorting';
 import PointsView from '../views/points';
 import LoadingView from '../views/loading';
 import NewButtonView from '../views/new-button';
-import { getDifference } from '../utils/date';
-import Point from './point';
+import PointPresenter from './point-presenter';
 import { updateItem } from '../utils/common';
+import { Sortings } from '../constants';
 
-export default class Trip {
+export default class TripPresenter {
   #points;
   #controlsElement;
   #pointsElement;
@@ -20,6 +20,7 @@ export default class Trip {
   #headerComponent;
   #activeFilter;
   #pointPresenters;
+  #activeSorting;
 
   constructor(points, activeFilter) {
     this.#points = points;
@@ -64,40 +65,55 @@ export default class Trip {
     render(this.#headerComponent, new CostView(cost), Positions.BEFORE_END);
   }
 
-  #renderSorting = () => {
-    render(this.#pointsElement, new SortingView(), Positions.BEFORE_END);
+  #renderSorting = (sortingType) => {
+    const sorting = new SortingView(sortingType);
+    sorting.setSortingChangeHandler(this.#onSortingChange);
+    render(this.#pointsElement, sorting, Positions.BEFORE_END);
   }
 
   #renderLoading = () => {
     render(this.#pointsElement, new LoadingView(), Positions.BEFORE_END);
   }
 
-  #renderPointsList = () => {
+  #renderPointsListContainer = () => {
     this.#pointsListComponent = new PointsView();
     render(this.#pointsElement, this.#pointsListComponent, Positions.BEFORE_END);
+  }
+
+  #renderPointsList= () => {
+    this.#points
+      .forEach((point) => {
+        const pointPresenter = new PointPresenter(this.#pointsListComponent, this.#updatePoints, this.#resetPointsList);
+        pointPresenter.init(point);
+        this.#pointPresenters.set(point.id, pointPresenter);
+      });
   }
 
   #renderContent = () => {
     this.#renderHeader();
     this.#renderRoute();
     this.#renderCost();
-    this.#renderSorting();
-    this.#renderPointsList();
-    this.#renderLoading();
+    this.#renderSorting(Sortings.Day);
     this.#renderNewButton();
+    this.#renderPointsListContainer();
+    this.#sortPoints(Sortings.Day);
+    this.#renderPointsList();
 
-    this.#points
-      .sort(((pointA, pointB) => getDifference(pointA.dateFrom, pointB.dateFrom)))
-      .forEach((point) => {
-        const pointPresenter = new Point(this.#pointsListComponent, this.#updatePoints, this.#resetPointsList);
-        pointPresenter.init(point);
-        this.#pointPresenters.set(point.id, pointPresenter);
-      });
+    this.#renderLoading();
   }
 
   #updatePoints = (updatedPoint) => {
     updateItem(updatedPoint, this.#points);
     this.#pointPresenters.get(updatedPoint.id).init(updatedPoint);
+  }
+
+  #sortPoints = (sortType) => {
+    if (sortType === this.#activeSorting) {
+      return;
+    }
+
+    this.#points = sortTripPoints(this.#points, sortType);
+    this.#activeSorting = sortType;
   }
 
   #resetPointsList = () => {
@@ -107,5 +123,11 @@ export default class Trip {
   #clearPointsList = () => {
     this.#pointPresenters.forEach((presenter) => presenter.destroy());
     this.#pointPresenters.clear();
+  }
+
+  #onSortingChange = (evt) => {
+    this.#sortPoints(evt.target.dataset.key);
+    this.#clearPointsList();
+    this.#renderPointsList();
   }
 }
