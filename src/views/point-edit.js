@@ -41,11 +41,25 @@ const createOfferTemplate = (currentOffer, selectedOffers) => {
   );
 };
 
-const createOffersTemplate = (selectedOffers, type) => (
-  getOffersByType(availableOffers, type)
+const createOffersTemplate = (selectedOffers, type) => {
+  const currentOffers = getOffersByType(availableOffers, type);
+
+  if (currentOffers.length === 0) {
+    return '';
+  }
+
+  const offersListTemplate = currentOffers
     .map((offer) => createOfferTemplate(offer, selectedOffers))
-    .join('')
-);
+    .join('');
+
+  return `
+    <section class="event__section  event__section--offers">
+      <h3 class="event__section-title  event__section-title--offers">Offers</h3>
+      <div class="event__available-offers">
+        ${offersListTemplate}
+      </div>
+    </section>`;
+};
 
 const createDestinationsTemplate = () => (
   destinations
@@ -118,13 +132,7 @@ const createPointEditTemplate = (state) => {
           </button>
         </header>
         <section class="event__details">
-          <section class="event__section  event__section--offers">
-            <h3 class="event__section-title  event__section-title--offers">Offers</h3>
-
-            <div class="event__available-offers">
-              ${offersTemplate}
-            </div>
-          </section>
+          ${offersTemplate}
 
           <section class="event__section  event__section--destination">
             <h3 class="event__section-title  event__section-title--destination">Destination</h3>
@@ -172,6 +180,7 @@ export default class PointEdit extends SmartView {
   #onTypeChange = (evt) => {
     this.updateState({
       type: evt.target.value,
+      offers: []
     });
     this.updateElement();
   }

@@ -16,8 +16,10 @@ const calculateTripEnd = (points) => (
     .reverse()[0]
 );
 
-const getOffersByType = (offers, type) => offers
-  .filter((offer) => offer.type === type || offer.type === 'mock')[0].offers;
+const getOffersByType = (offers, type) => {
+  const filtered = offers.filter((offer) => offer.type === type);
+  return filtered.length ? filtered[0].offers : [];
+};
 
 const sortTripPoints = (points, sortType) => {
   switch (sortType) {
