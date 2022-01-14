@@ -21,6 +21,8 @@ const getOffersByType = (offers, type) => {
   return filtered.length ? filtered[0].offers : [];
 };
 
+const getDestinationByName = (destinations, name) => destinations.find((destination) => destination.name === name);
+
 const sortTripPoints = (points, sortType) => {
   switch (sortType) {
     case Sortings.Day:
@@ -39,4 +41,4 @@ const sortTripPoints = (points, sortType) => {
   }
 };
 
-export { calculateCost, getUniqueDestinations, calculateTripStart, calculateTripEnd, getOffersByType, sortTripPoints };
+export { calculateCost, getUniqueDestinations, calculateTripStart, calculateTripEnd, getOffersByType, sortTripPoints, getDestinationByName };

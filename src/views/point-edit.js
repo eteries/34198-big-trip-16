@@ -1,7 +1,7 @@
 import { POINT_TYPES } from '../constants.js';
 import { destinations } from '../mocks/destinations.js';
 import { offers as availableOffers } from '../mocks/offers.js';
-import { getOffersByType } from '../utils/calculate';
+import { getDestinationByName, getOffersByType } from '../utils/calculate';
 import { convertPointToState } from '../utils/point';
 import SmartView from './smart-view';
 
@@ -61,7 +61,7 @@ const createOffersTemplate = (selectedOffers, type) => {
     </section>`;
 };
 
-const createDestinationsTemplate = () => (
+const createDestinationOptionsTemplate = () => (
   destinations
     .map(({name}) => `<option value="${name}"></option>`)
     .join('')
@@ -71,14 +71,33 @@ const createPicturesTemplate = (pictures) => (
   pictures.map(({src, description}) => `<img class="event__photo" src="${src}" alt="${description}">`).join('')
 );
 
+const createDestinationsTemplate = (destination) => {
+  if (!destination) {
+    return  '';
+  }
+
+  const picturesTemplate = createPicturesTemplate(destination.pictures);
+
+  return (
+    `<section class="event__section  event__section--destination">
+      <h3 class="event__section-title  event__section-title--destination">Destination</h3>
+      <p class="event__destination-description">${destination.description}</p>
+      <div class="event__photos-container">
+        <div class="event__photos-tape">
+          ${picturesTemplate}
+        </div>
+      </div>
+    </section>`
+  );
+};
+
 const createPointEditTemplate = (state) => {
   const {type, dateFromValue, dateToValue, basePrice, offers, destination} = state;
-  const {description: destinationDescription, pictures} = destination;
 
   const typesTemplate = createPointTypesTemplate(POINT_TYPES, type);
-  const destinationsTemplate = createDestinationsTemplate();
+  const destinationOptionsTemplate = createDestinationOptionsTemplate();
   const offersTemplate = createOffersTemplate(offers, type);
-  const picturesTemplate = createPicturesTemplate(pictures);
+  const destinationsTemplate = createDestinationsTemplate(destination);
 
   return (
     `<li class="trip-events__item">
@@ -105,7 +124,7 @@ const createPointEditTemplate = (state) => {
             </label>
             <input class="event__input  event__input--destination" id="event-destination-1" type="text" name="event-destination" value="Chamonix" list="destination-list-1">
             <datalist id="destination-list-1">
-              ${destinationsTemplate}
+              ${destinationOptionsTemplate}
             </datalist>
           </div>
 
@@ -133,16 +152,7 @@ const createPointEditTemplate = (state) => {
         </header>
         <section class="event__details">
           ${offersTemplate}
-
-          <section class="event__section  event__section--destination">
-            <h3 class="event__section-title  event__section-title--destination">Destination</h3>
-            <p class="event__destination-description">${destinationDescription}</p>
-            <div class="event__photos-container">
-              <div class="event__photos-tape">
-                ${picturesTemplate}
-              </div>
-            </div>
-          </section>
+          ${destinationsTemplate}
         </section>
       </form>
     </li>`
@@ -180,7 +190,26 @@ export default class PointEdit extends SmartView {
   #onTypeChange = (evt) => {
     this.updateState({
       type: evt.target.value,
-      offers: []
+      offers: [],
+    });
+    this.updateElement();
+  }
+
+  #onDestinationChange = (evt) => {
+    const value = evt.target.value;
+
+    if (!value) {
+      return;
+    }
+
+    const destination = getDestinationByName(destinations, evt.target.value);
+
+    if (!destination) {
+      return;
+    }
+
+    this.updateState({
+      destination,
     });
     this.updateElement();
   }
@@ -193,6 +222,7 @@ export default class PointEdit extends SmartView {
 
   #setInnerHandlers = () => {
     this.element.querySelector('.event__type-group').addEventListener('change', this.#onTypeChange);
+    this.element.querySelector('.event__input--destination').addEventListener('input', this.#onDestinationChange);
   }
 }
 
