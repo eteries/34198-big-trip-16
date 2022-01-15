@@ -19,8 +19,6 @@ const convertPointToState = (point) => {
   state.dateFromValue = formatDate(state.dateFrom, 'DD/MM/YY HH:mm');
   state.dateToValue= formatDate(state.dateTo, 'DD/MM/YY HH:mm');
 
-  console.log('state',state);
-
   return state;
 };
 
@@ -29,8 +27,6 @@ const convertStateToPoint = (state) => {
 
   delete point.dateFromValue;
   delete point.dateToValue;
-
-  console.log('point',point);
 
   return point;
 };
