@@ -237,6 +237,18 @@ export default class PointEdit extends SmartView {
     this.updateElement();
   }
 
+  #onPriceChange = (evt) => {
+    const basePrice = parseInt(evt.target.value, 10);
+
+    if (!isFinite(basePrice) || basePrice < 0) {
+      return;
+    }
+
+    this.updateState({
+      basePrice,
+    });
+  }
+
   _restoreHandlers = () => {
     this.#setInnerHandlers();
     this.setCloseClickHandler(this._handlers.onCloseClick);
@@ -247,6 +259,7 @@ export default class PointEdit extends SmartView {
     this.element.querySelector('.event__type-group').addEventListener('change', this.#onTypeChange);
     this.element.querySelector('.event__input--destination').addEventListener('input', this.#onDestinationChange);
     this.element.querySelector('.event__details').addEventListener('change', this.#onOffersChange);
+    this.element.querySelector('.event__input--price').addEventListener('input', this.#onPriceChange);
   }
 }
 

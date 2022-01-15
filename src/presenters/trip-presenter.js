@@ -72,7 +72,8 @@ export default class TripPresenter {
 
     const prevElement = this.#costComponent.element;
     this.#costComponent.removeElement();
-    prevElement.replaceWith(new CostView(cost).element);
+    this.#costComponent = new CostView(cost);
+    prevElement.replaceWith(this.#costComponent.element);
   }
 
   #renderSorting = (sortingType) => {
