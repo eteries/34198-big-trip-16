@@ -1,7 +1,10 @@
 import { Sortings } from '../constants';
 import { getDuration, getUnixNum } from './date';
 
-const calculateCost = (points) => points.reduce((sum, current) => sum + current.basePrice, 0);
+const calculateCost = (points) => points.reduce((cost, current) => {
+  const offersSum = current.offers.reduce((sum, {price}) => sum + price, 0);
+  return cost + current.basePrice + offersSum;
+}, 0);
 
 const getUniqueDestinations = (points) => [...new Set(points.map(({destination = {}}) => destination.name))];
 
