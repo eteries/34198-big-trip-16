@@ -40,9 +40,10 @@ export default class PointPresenter {
       document.removeEventListener('keydown', this.#onDocumentKeyDown);
     });
 
-    this.#pointEditComponent.setSubmitHandler(() => {
+    this.#pointEditComponent.setSubmitHandler((updatedPoint) => {
       this.#closeEditor();
       document.removeEventListener('keydown', this.#onDocumentKeyDown);
+      this.#onUpdate(updatedPoint);
     });
 
     if (!prevPointComponent || !prevPointEditComponent) {

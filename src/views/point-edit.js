@@ -2,7 +2,7 @@ import { POINT_TYPES } from '../constants.js';
 import { destinations } from '../mocks/destinations.js';
 import { offers as availableOffers } from '../mocks/offers.js';
 import { getDestinationByName, getOffersByType } from '../utils/calculate';
-import { convertPointToState } from '../utils/point';
+import { convertPointToState, convertStateToPoint } from '../utils/point';
 import SmartView from './smart-view';
 
 const createPointTypeTemplate = (type, currentType) => {
@@ -30,7 +30,8 @@ const createOfferTemplate = (currentOffer, selectedOffers) => {
       <input class="event__offer-checkbox  visually-hidden"
              id="event-offer-${id}"
              type="checkbox"
-             name="event-offer-${id}"
+             name="event-offer"
+             value="${id}"
              ${isAlreadySelected ? 'checked' : ''}>
       <label class="event__offer-label" for="event-offer-${id}">
         <span class="event__offer-title">${title}</span>
@@ -184,13 +185,35 @@ export default class PointEdit extends SmartView {
 
   #onSubmit = (evt) => {
     evt.preventDefault();
-    this._handlers.onSubmit();
+    this._handlers.onSubmit(convertStateToPoint(this._state));
   }
 
   #onTypeChange = (evt) => {
     this.updateState({
       type: evt.target.value,
       offers: [],
+    });
+    this.updateElement();
+  }
+
+  #onOffersChange = ({target: checkbox}) => {
+    const offers = [...this._state.offers];
+    if (checkbox.checked) {
+      const currentOffers = getOffersByType(availableOffers, this._state.type);
+      const newOffer = currentOffers.find(({id}) => id.toString() === checkbox.value);
+      if (newOffer) {
+        offers.push(newOffer);
+      }
+    }
+    else {
+      const index = offers.findIndex(({id}) => id.toString() === checkbox.value);
+      if (index > -1) {
+        offers.splice(index, 1);
+      }
+    }
+
+    this.updateState({
+      offers
     });
     this.updateElement();
   }
@@ -223,6 +246,7 @@ export default class PointEdit extends SmartView {
   #setInnerHandlers = () => {
     this.element.querySelector('.event__type-group').addEventListener('change', this.#onTypeChange);
     this.element.querySelector('.event__input--destination').addEventListener('input', this.#onDestinationChange);
+    this.element.querySelector('.event__details').addEventListener('change', this.#onOffersChange);
   }
 }
 

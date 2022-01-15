@@ -2,17 +2,12 @@ import { destinations } from './destinations.js';
 import { generateDateFrom, generateDateTo } from './date';
 import { offers } from './offers.js';
 import { getRandomArrayElement, getRandomInt, getRandomSubArray, getUniqueRandomInt } from '../utils/random.js';
-import { POINT_TYPES } from '../constants';
+import { IDRange, POINT_TYPES } from '../constants';
 import { getOffersByType } from '../utils/calculate';
 
 const EventPrice = {
   MIN: 50,
   MAX: 1000,
-};
-
-const IDRange = {
-  MIN: 1,
-  MAX: 9999,
 };
 
 const generatePoint = () => {
