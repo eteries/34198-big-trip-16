@@ -36,13 +36,14 @@ export default class PointPresenter {
     });
 
     this.#pointEditComponent.setCloseClickHandler(() => {
-      this.#closeEditor();
+      this.resetView();
       document.removeEventListener('keydown', this.#onDocumentKeyDown);
     });
 
-    this.#pointEditComponent.setSubmitHandler(() => {
+    this.#pointEditComponent.setSubmitHandler((updatedPoint) => {
       this.#closeEditor();
       document.removeEventListener('keydown', this.#onDocumentKeyDown);
+      this.#onUpdate(updatedPoint);
     });
 
     if (!prevPointComponent || !prevPointEditComponent) {
@@ -62,8 +63,9 @@ export default class PointPresenter {
     remove(prevPointEditComponent);
   }
 
-  reset() {
+  resetView() {
     if (this.#mode !== Mode.Closed) {
+      this.#pointEditComponent.reset(this.#point);
       this.#closeEditor();
     }
   }
@@ -98,7 +100,7 @@ export default class PointPresenter {
 
   #onDocumentKeyDown = (evt) => {
     if (isEscape(evt)) {
-      this.#closeEditor();
+      this.resetView();
       document.removeEventListener('keydown', this.#onDocumentKeyDown);
     }
   };

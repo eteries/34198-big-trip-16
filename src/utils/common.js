@@ -5,7 +5,7 @@ const updateItem = (updatedItem, items) => {
     return items;
   }
 
-  return [items.slice(0, index), updatedItem, items.slice(index + 1, items.length - 1)];
+  return [...items.slice(0, index), updatedItem, ...items.slice(index + 1)];
 };
 
 export { updateItem };

@@ -21,6 +21,7 @@ export default class TripPresenter {
   #activeFilter;
   #pointPresenters;
   #activeSorting;
+  #costComponent;
 
   constructor(points, activeFilter) {
     this.#points = points;
@@ -62,7 +63,17 @@ export default class TripPresenter {
 
   #renderCost = () => {
     const cost = calculateCost(this.#points);
-    render(this.#headerComponent, new CostView(cost), Positions.BEFORE_END);
+
+    if (!this.#costComponent) {
+      this.#costComponent = new CostView(cost);
+      render(this.#headerComponent, this.#costComponent, Positions.BEFORE_END);
+      return;
+    }
+
+    const prevElement = this.#costComponent.element;
+    this.#costComponent.removeElement();
+    this.#costComponent = new CostView(cost);
+    prevElement.replaceWith(this.#costComponent.element);
   }
 
   #renderSorting = (sortingType) => {
@@ -103,8 +114,9 @@ export default class TripPresenter {
   }
 
   #updatePoints = (updatedPoint) => {
-    updateItem(updatedPoint, this.#points);
+    this.#points = updateItem(updatedPoint, this.#points);
     this.#pointPresenters.get(updatedPoint.id).init(updatedPoint);
+    this.#renderCost();
   }
 
   #sortPoints = (sortType) => {
@@ -117,7 +129,7 @@ export default class TripPresenter {
   }
 
   #resetPointsList = () => {
-    this.#pointPresenters.forEach((presenter) => presenter.reset());
+    this.#pointPresenters.forEach((presenter) => presenter.resetView());
   }
 
   #clearPointsList = () => {

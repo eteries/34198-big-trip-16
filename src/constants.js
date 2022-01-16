@@ -47,3 +47,8 @@ export const Mode = {
   Closed: 'Closed',
   Open: 'Open',
 };
+
+export const IDRange = {
+  MIN: 1,
+  MAX: 9999,
+};
