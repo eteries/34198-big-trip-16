@@ -36,7 +36,7 @@ export default class PointPresenter {
     });
 
     this.#pointEditComponent.setCloseClickHandler(() => {
-      this.#closeEditor();
+      this.resetView();
       document.removeEventListener('keydown', this.#onDocumentKeyDown);
     });
 
@@ -63,8 +63,9 @@ export default class PointPresenter {
     remove(prevPointEditComponent);
   }
 
-  reset() {
+  resetView() {
     if (this.#mode !== Mode.Closed) {
+      this.#pointEditComponent.reset(this.#point);
       this.#closeEditor();
     }
   }
@@ -99,7 +100,7 @@ export default class PointPresenter {
 
   #onDocumentKeyDown = (evt) => {
     if (isEscape(evt)) {
-      this.#closeEditor();
+      this.resetView();
       document.removeEventListener('keydown', this.#onDocumentKeyDown);
     }
   };

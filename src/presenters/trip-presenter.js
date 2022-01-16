@@ -129,7 +129,7 @@ export default class TripPresenter {
   }
 
   #resetPointsList = () => {
-    this.#pointPresenters.forEach((presenter) => presenter.reset());
+    this.#pointPresenters.forEach((presenter) => presenter.resetView());
   }
 
   #clearPointsList = () => {
