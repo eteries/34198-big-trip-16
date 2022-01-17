@@ -1,9 +1,13 @@
+import '../../node_modules/flatpickr/dist/flatpickr.min.css';
+
+import SmartView from './smart-view';
 import { POINT_TYPES } from '../constants.js';
 import { destinations } from '../mocks/destinations.js';
 import { offers as availableOffers } from '../mocks/offers.js';
 import { getDestinationByName, getOffersByType } from '../utils/calculate';
 import { convertPointToState, convertStateToPoint } from '../utils/point';
-import SmartView from './smart-view';
+import { getUnixNum, setDateTimePicker } from '../utils/date';
+import { highlightElement } from '../utils/dom';
 
 const createPointTypeTemplate = (type, currentType) => {
   const checked = type === currentType ? 'checked' : '';
@@ -161,10 +165,13 @@ const createPointEditTemplate = (state) => {
 };
 
 export default class PointEdit extends SmartView {
+  #datepickers;
+
   constructor(point) {
     super();
     this._state = convertPointToState(point);
     this.#setInnerHandlers();
+    this.#datepickers = new Set();
   }
 
   get template() {
@@ -183,13 +190,38 @@ export default class PointEdit extends SmartView {
     editForm.addEventListener('submit', this.#onSubmit);
   }
 
+  setDatepickers = () => {
+    this.#datepickers.add(setDateTimePicker({
+      element: this.element.querySelector('#event-start-time-1'),
+      defaultDate: this._state.dateFrom,
+      onChange: this.#onDateFromChange,
+    }));
+
+    this.#datepickers.add(setDateTimePicker({
+      element: this.element.querySelector('#event-end-time-1'),
+      defaultDate: this._state.dateTo,
+      onChange: this.#onDateToChange,
+    }));
+  }
+
   reset = (point) => {
     this.updateState(convertPointToState(point));
     this.updateElement();
   }
 
+  removeElement() {
+    super.removeElement();
+
+    this.#datepickers.forEach((datepicker) => datepicker.destroy());
+    this.#datepickers.clear();
+  }
+
   #onSubmit = (evt) => {
     evt.preventDefault();
+
+    if (!this.#validateDate()) {
+      return;
+    }
     this._handlers.onSubmit(convertStateToPoint(this._state));
   }
 
@@ -254,6 +286,18 @@ export default class PointEdit extends SmartView {
     });
   }
 
+  #onDateFromChange = ([dateFrom]) => {
+    this.updateState({
+      dateFrom,
+    });
+  };
+
+  #onDateToChange = ([dateTo]) => {
+    this.updateState({
+      dateTo,
+    });
+  };
+
   _restoreHandlers = () => {
     this.#setInnerHandlers();
     this.setCloseClickHandler(this._handlers.onCloseClick);
@@ -265,6 +309,13 @@ export default class PointEdit extends SmartView {
     this.element.querySelector('.event__input--destination').addEventListener('input', this.#onDestinationChange);
     this.element.querySelector('.event__details').addEventListener('change', this.#onOffersChange);
     this.element.querySelector('.event__input--price').addEventListener('input', this.#onPriceChange);
+  }
+
+  #validateDate = () => {
+    const dateTo = this.element.querySelector('#event-end-time-1');
+    const isValid = getUnixNum(this._state.dateFrom) <= getUnixNum(this._state.dateTo);
+    highlightElement(dateTo, isValid);
+    return isValid;
   }
 }
 

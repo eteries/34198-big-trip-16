@@ -1,5 +1,6 @@
 import dayjs from 'dayjs';
 import duration from 'dayjs/plugin/duration';
+import flatpickr from 'flatpickr';
 
 dayjs.extend(duration);
 
@@ -53,4 +54,16 @@ const getToday = () => dayjs().startOf('date').toISOString();
 
 const getUnixNum = (date) => dayjs(date).unix();
 
-export { getDuration, formatPointDuration, formatDate, addTimeInterval, subtractTimeInterval, getDifference, getToday, formatTripDuration, getUnixNum };
+const setDateTimePicker = ({element, defaultDate, onChange}) => (
+  flatpickr(
+    element,
+    {
+      enableTime: true,
+      dateFormat: 'd/m/Y H:i',
+      defaultDate,
+      onChange
+    }
+  )
+);
+
+export { getDuration, formatPointDuration, formatDate, addTimeInterval, subtractTimeInterval, getDifference, getToday, formatTripDuration, getUnixNum, setDateTimePicker };

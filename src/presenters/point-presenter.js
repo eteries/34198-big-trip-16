@@ -81,6 +81,7 @@ export default class PointPresenter {
 
   #openEditor = () => {
     this.#pointComponent.element.replaceWith(this.#pointEditComponent.element);
+    this.#pointEditComponent.setDatepickers();
     this.#onOpen();
     this.#mode = Mode.Open;
   };

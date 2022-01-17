@@ -40,4 +40,13 @@ const remove = (component) => {
 
 const isEscape = (evt) => evt.key === 'Escape' || evt.key === 'Esc';
 
-export { Positions, createElement, render, remove, isEscape };
+const highlightElement = (element, isValid) => {
+  if (!isValid) {
+    element.style.outline = '1px solid red';
+    return;
+  }
+
+  element.style.outline = null;
+};
+
+export { Positions, createElement, render, remove, isEscape, highlightElement };
