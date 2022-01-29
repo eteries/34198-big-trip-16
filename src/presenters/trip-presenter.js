@@ -9,8 +9,7 @@ import PointsView from '../views/points';
 import LoadingView from '../views/loading';
 import NewButtonView from '../views/new-button';
 import PointPresenter from './point-presenter';
-import { updateItem } from '../utils/common';
-import { Sortings } from '../constants';
+import { Sortings, UpdateType, UserAction } from '../constants';
 
 export default class TripPresenter {
   #pointsModel;
@@ -27,6 +26,8 @@ export default class TripPresenter {
     this.#pointsModel = pointsModel;
     this.#activeFilter = activeFilter;
     this.#pointPresenters = new Map();
+
+    this.#pointsModel.addObserver(this.#handleModelEvent);
   }
 
   init(controlsContainer, pointsContainer) {
@@ -102,7 +103,7 @@ export default class TripPresenter {
   #renderPointsList= () => {
     this.points
       .forEach((point) => {
-        const pointPresenter = new PointPresenter(this.#pointsListComponent, this.#updatePoints, this.#resetPointsList);
+        const pointPresenter = new PointPresenter(this.#pointsListComponent, this.#handleViewAction, this.#resetPointsList);
         pointPresenter.init(point);
         this.#pointPresenters.set(point.id, pointPresenter);
       });
@@ -121,10 +122,35 @@ export default class TripPresenter {
     this.#renderLoading();
   }
 
-  #updatePoints = (updatedPoint) => {
-    this.points = updateItem(updatedPoint, this.points);
-    this.#pointPresenters.get(updatedPoint.id).init(updatedPoint);
-    this.#renderCost();
+  #handleViewAction = (actionType, updateType, update) => {
+    switch (actionType) {
+      case UserAction.UPDATE_POINT:
+        this.#pointsModel.updatePoint(updateType, update);
+        break;
+      case UserAction.ADD_POINT:
+        this.#pointsModel.addPoint(updateType, update);
+        break;
+      case UserAction.DELETE_POINT:
+        this.#pointsModel.deletePoint(updateType, update);
+        break;
+    }
+  }
+
+  #handleModelEvent = (updateType, point) => {
+    switch (updateType) {
+      case UpdateType.POINT:
+        this.#pointPresenters.get(point.id).init(point);
+        break;
+      case UpdateType.LIST:
+        this.#clearPointsList();
+        this.#renderPointsList();
+        break;
+      case UpdateType.TRIP:
+        this.#clearPointsList();
+        this.#renderPointsList();
+        this.#renderCost();
+        break;
+    }
   }
 
   #sortPoints = (sortType) => {

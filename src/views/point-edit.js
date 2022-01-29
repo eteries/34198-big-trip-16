@@ -190,6 +190,12 @@ export default class PointEdit extends SmartView {
     editForm.addEventListener('submit', this.#onSubmit);
   }
 
+  setDeleteHandler(cb) {
+    this._handlers.onDelete = cb;
+    const editForm = this.element.querySelector('.event--edit');
+    editForm.addEventListener('reset', this.#onDelete);
+  }
+
   setDatepickers = () => {
     this.#datepickers.add(setDateTimePicker({
       element: this.element.querySelector('#event-start-time-1'),
@@ -223,6 +229,11 @@ export default class PointEdit extends SmartView {
       return;
     }
     this._handlers.onSubmit(convertStateToPoint(this._state));
+  }
+
+  #onDelete = (evt) => {
+    evt.preventDefault();
+    this._handlers.onDelete(convertStateToPoint(this._state));
   }
 
   #onTypeChange = (evt) => {
@@ -302,6 +313,7 @@ export default class PointEdit extends SmartView {
     this.#setInnerHandlers();
     this.setCloseClickHandler(this._handlers.onCloseClick);
     this.setSubmitHandler(this._handlers.onSubmit);
+    this.setDeleteHandler(this._handlers.onDelete);
   }
 
   #setInnerHandlers = () => {

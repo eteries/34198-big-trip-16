@@ -1,7 +1,7 @@
 import PointView from '../views/point';
 import PointEditView from '../views/point-edit';
 import { isEscape, Positions, remove, render } from '../utils/dom';
-import { Mode } from '../constants';
+import { Mode, UpdateType, UserAction } from '../constants';
 
 export default class PointPresenter {
   #container;
@@ -43,7 +43,21 @@ export default class PointPresenter {
     this.#pointEditComponent.setSubmitHandler((updatedPoint) => {
       this.#closeEditor();
       document.removeEventListener('keydown', this.#onDocumentKeyDown);
-      this.#onUpdate(updatedPoint);
+      this.#onUpdate(
+        UserAction.UPDATE_POINT,
+        UpdateType.TRIP,
+        updatedPoint
+      );
+    });
+
+    this.#pointEditComponent.setDeleteHandler((deletedPoint) => {
+      this.#closeEditor();
+      document.removeEventListener('keydown', this.#onDocumentKeyDown);
+      this.#onUpdate(
+        UserAction.DELETE_POINT,
+        UpdateType.TRIP,
+        deletedPoint,
+      );
     });
 
     if (!prevPointComponent || !prevPointEditComponent) {
@@ -92,11 +106,14 @@ export default class PointPresenter {
   };
 
   #toggleFavorites = () => {
-    const updatedPoint = {
-      ...this.#point,
-      isFavorite: !this.#point.isFavorite
-    };
-    this.#onUpdate(updatedPoint);
+    this.#onUpdate(
+      UserAction.UPDATE_POINT,
+      UpdateType.POINT,
+      {
+        ...this.#point,
+        isFavorite: !this.#point.isFavorite
+      }
+    );
   };
 
   #onDocumentKeyDown = (evt) => {
