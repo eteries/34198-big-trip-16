@@ -13,7 +13,7 @@ import { updateItem } from '../utils/common';
 import { Sortings } from '../constants';
 
 export default class TripPresenter {
-  #points;
+  #pointsModel;
   #controlsElement;
   #pointsElement;
   #pointsListComponent;
@@ -23,8 +23,8 @@ export default class TripPresenter {
   #activeSorting;
   #costComponent;
 
-  constructor(points, activeFilter) {
-    this.#points = points;
+  constructor(activeFilter, pointsModel) {
+    this.#pointsModel = pointsModel;
     this.#activeFilter = activeFilter;
     this.#pointPresenters = new Map();
   }
@@ -33,12 +33,20 @@ export default class TripPresenter {
     this.#controlsElement = controlsContainer;
     this.#pointsElement = pointsContainer;
 
-    if (!this.#points.length) {
+    if (!this.points.length) {
       this.#renderEmptyTrip();
       return;
     }
 
     this.#renderContent();
+  }
+
+  get points() {
+    return this.#pointsModel.points;
+  }
+
+  set points(points) {
+    this.#pointsModel.points = points;
   }
 
   #renderEmptyTrip = () => {
@@ -55,14 +63,14 @@ export default class TripPresenter {
   }
 
   #renderRoute = () => {
-    const uniqueDestinations = getUniqueDestinations(this.#points);
-    const startDate = calculateTripStart(this.#points);
-    const endDate = calculateTripEnd(this.#points);
+    const uniqueDestinations = getUniqueDestinations(this.points);
+    const startDate = calculateTripStart(this.points);
+    const endDate = calculateTripEnd(this.points);
     render(this.#headerComponent, new RouteView(uniqueDestinations, startDate, endDate), Positions.BEFORE_END);
   }
 
   #renderCost = () => {
-    const cost = calculateCost(this.#points);
+    const cost = calculateCost(this.points);
 
     if (!this.#costComponent) {
       this.#costComponent = new CostView(cost);
@@ -92,7 +100,7 @@ export default class TripPresenter {
   }
 
   #renderPointsList= () => {
-    this.#points
+    this.points
       .forEach((point) => {
         const pointPresenter = new PointPresenter(this.#pointsListComponent, this.#updatePoints, this.#resetPointsList);
         pointPresenter.init(point);
@@ -114,7 +122,7 @@ export default class TripPresenter {
   }
 
   #updatePoints = (updatedPoint) => {
-    this.#points = updateItem(updatedPoint, this.#points);
+    this.points = updateItem(updatedPoint, this.points);
     this.#pointPresenters.get(updatedPoint.id).init(updatedPoint);
     this.#renderCost();
   }
@@ -124,7 +132,7 @@ export default class TripPresenter {
       return;
     }
 
-    this.#points = sortTripPoints(this.#points, sortType);
+    this.points = sortTripPoints(this.points, sortType);
     this.#activeSorting = sortType;
   }
 

@@ -5,6 +5,7 @@ import { Positions, render } from './utils/dom';
 import NavigationView from './views/navigation';
 import FiltersView from './views/filters';
 import StatisticsView from './views/statistics';
+import PointsModel from './models/points-model';
 
 const tripControlsElement = document.querySelector('.trip-controls');
 const tripEventsElement = document.querySelector('.trip-events');
@@ -17,6 +18,8 @@ render(tripEventsElement, new StatisticsView(), Positions.AFTER_END);
 const tripPoints = new Array(RENDERED_EVENTS_NUMBER)
   .fill(null)
   .map(generatePoint);
+const pointsModel = new PointsModel();
+pointsModel.points = tripPoints;
 
-new TripPresenter(tripPoints, activeFilter)
+new TripPresenter(activeFilter, pointsModel)
   .init(tripControlsElement, tripEventsElement);
