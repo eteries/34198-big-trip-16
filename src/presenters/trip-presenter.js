@@ -55,14 +55,13 @@ export default class TripPresenter {
   get points() {
     const points = this.#pointsModel.points;
 
-    if (this.#activeFilter === this.#filtersModel.filter) {
-      return sortTripPoints(points, this.#activeSorting);
+    if (this.#activeFilter !== this.#filtersModel.filter) {
+      this.#activeSorting = Sortings.Day;
     }
 
     this.#activeFilter = this.#filtersModel.filter;
-    const filteredPoints = filterTripPoints(points, this.#activeFilter);
-    this.#activeSorting = Sortings.Day;
     this.#renderSorting(this.#activeSorting);
+    const filteredPoints = filterTripPoints(points, this.#activeFilter);
     return sortTripPoints(filteredPoints, this.#activeSorting);
   }
 
