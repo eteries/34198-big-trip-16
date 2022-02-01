@@ -1,4 +1,4 @@
-import { Sortings } from '../constants';
+import { Filters, Sortings } from '../constants';
 import { getDuration, getUnixNum } from './date';
 
 const calculateCost = (points) => points.reduce((cost, current) => {
@@ -44,4 +44,17 @@ const sortTripPoints = (points, sortType) => {
   }
 };
 
-export { calculateCost, getUniqueDestinations, calculateTripStart, calculateTripEnd, getOffersByType, sortTripPoints, getDestinationByName };
+const filterTripPoints = (points, filterType) => {
+  switch (filterType) {
+    case Filters.Future:
+      return [...points].filter((point) => getUnixNum(point.dateFrom) > getUnixNum(new Date()));
+
+    case Filters.Past:
+      return [...points].filter((point) => getUnixNum(point.dateFrom) < getUnixNum(new Date()));
+
+    default:
+      return points;
+  }
+};
+
+export { calculateCost, getUniqueDestinations, calculateTripStart, calculateTripEnd, getOffersByType, sortTripPoints, getDestinationByName, filterTripPoints };

@@ -1,4 +1,11 @@
-import { calculateCost, calculateTripEnd, calculateTripStart, getUniqueDestinations, sortTripPoints } from '../utils/calculate';
+import {
+  calculateCost,
+  calculateTripEnd,
+  calculateTripStart,
+  filterTripPoints,
+  getUniqueDestinations,
+  sortTripPoints
+} from '../utils/calculate';
 import { Positions, render } from '../utils/dom';
 import EmptyView from '../views/empty';
 import HeaderView from '../views/header';
@@ -13,6 +20,7 @@ import { Sortings, UpdateType, UserAction } from '../constants';
 
 export default class TripPresenter {
   #pointsModel;
+  #filtersModel;
   #controlsElement;
   #pointsElement;
   #pointsListComponent;
@@ -21,13 +29,15 @@ export default class TripPresenter {
   #pointPresenters;
   #activeSorting;
   #costComponent;
+  #sortingComponent;
 
-  constructor(activeFilter, pointsModel) {
+  constructor(pointsModel, filtersModel) {
     this.#pointsModel = pointsModel;
-    this.#activeFilter = activeFilter;
+    this.#filtersModel = filtersModel;
     this.#pointPresenters = new Map();
 
     this.#pointsModel.addObserver(this.#handleModelEvent);
+    this.#filtersModel.addObserver(this.#handleModelEvent);
   }
 
   init(controlsContainer, pointsContainer) {
@@ -43,7 +53,17 @@ export default class TripPresenter {
   }
 
   get points() {
-    return this.#pointsModel.points;
+    const points = this.#pointsModel.points;
+
+    if (this.#activeFilter === this.#filtersModel.filter) {
+      return sortTripPoints(points, this.#activeSorting);
+    }
+
+    this.#activeFilter = this.#filtersModel.filter;
+    const filteredPoints = filterTripPoints(points, this.#activeFilter);
+    this.#activeSorting = Sortings.Day;
+    this.#renderSorting(this.#activeSorting);
+    return sortTripPoints(filteredPoints, this.#activeSorting);
   }
 
   set points(points) {
@@ -86,9 +106,18 @@ export default class TripPresenter {
   }
 
   #renderSorting = (sortingType) => {
-    const sorting = new SortingView(sortingType);
-    sorting.setSortingChangeHandler(this.#onSortingChange);
-    render(this.#pointsElement, sorting, Positions.BEFORE_END);
+    if (!this.#sortingComponent) {
+      this.#sortingComponent = new SortingView(sortingType);
+      this.#sortingComponent.setSortingChangeHandler(this.#onSortingChange);
+      render(this.#pointsElement, this.#sortingComponent, Positions.BEFORE_END);
+      return;
+    }
+
+    const prevElement = this.#sortingComponent.element;
+    this.#sortingComponent.removeElement();
+    this.#sortingComponent = new SortingView(sortingType);
+    this.#sortingComponent.setSortingChangeHandler(this.#onSortingChange);
+    prevElement.replaceWith(this.#sortingComponent.element);
   }
 
   #renderLoading = () => {
@@ -158,7 +187,6 @@ export default class TripPresenter {
       return;
     }
 
-    this.points = sortTripPoints(this.points, sortType);
     this.#activeSorting = sortType;
   }
 
