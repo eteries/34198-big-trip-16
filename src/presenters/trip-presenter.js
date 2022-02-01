@@ -143,7 +143,6 @@ export default class TripPresenter {
     const pointPresenter = new PointPresenter(this.#pointsListComponent, this.#handleViewAction, this.#resetPointsList);
     const newPoint = {id: getUniqueRandomInt(IDRange.MIN, IDRange.MAX)()};
     this.#sortPoints(this.#activeSorting);
-    this.#handleViewAction(UserAction.ADD_POINT, UpdateType.LIST, newPoint);
     pointPresenter.init(newPoint);
     pointPresenter.openEditor();
     this.#pointPresenters.set(newPoint.id, pointPresenter);
