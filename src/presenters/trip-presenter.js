@@ -16,7 +16,8 @@ import PointsView from '../views/points';
 import LoadingView from '../views/loading';
 import NewButtonView from '../views/new-button';
 import PointPresenter from './point-presenter';
-import { Sortings, UpdateType, UserAction } from '../constants';
+import { IDRange, Sortings, UpdateType, UserAction } from '../constants';
+import { getUniqueRandomInt } from '../utils/random';
 
 export default class TripPresenter {
   #pointsModel;
@@ -78,7 +79,9 @@ export default class TripPresenter {
   }
 
   #renderNewButton = () => {
-    render(this.#controlsElement, new NewButtonView(), Positions.AFTER_END);
+    const newButton = new NewButtonView();
+    newButton.setNewButtonClickHandler(this.#addNewPoint);
+    render(this.#controlsElement, newButton, Positions.AFTER_END);
   }
 
   #renderRoute = () => {
@@ -134,6 +137,16 @@ export default class TripPresenter {
         pointPresenter.init(point);
         this.#pointPresenters.set(point.id, pointPresenter);
       });
+  }
+
+  #addNewPoint = () => {
+    const pointPresenter = new PointPresenter(this.#pointsListComponent, this.#handleViewAction, this.#resetPointsList);
+    const newPoint = {id: getUniqueRandomInt(IDRange.MIN, IDRange.MAX)()};
+    this.#sortPoints(this.#activeSorting);
+    this.#handleViewAction(UserAction.ADD_POINT, UpdateType.LIST, newPoint);
+    pointPresenter.init(newPoint);
+    pointPresenter.openEditor();
+    this.#pointPresenters.set(newPoint.id, pointPresenter);
   }
 
   #renderContent = () => {

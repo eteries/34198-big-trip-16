@@ -27,7 +27,7 @@ export default class PointPresenter {
     this.#point = point;
 
     this.#pointComponent.setOpenClickHandler(() => {
-      this.#openEditor();
+      this.openEditor();
       document.addEventListener('keydown', this.#onDocumentKeyDown);
     });
 
@@ -41,7 +41,7 @@ export default class PointPresenter {
     });
 
     this.#pointEditComponent.setSubmitHandler((updatedPoint) => {
-      this.#closeEditor();
+      this.closeEditor();
       document.removeEventListener('keydown', this.#onDocumentKeyDown);
       this.#onUpdate(
         UserAction.UPDATE_POINT,
@@ -51,7 +51,7 @@ export default class PointPresenter {
     });
 
     this.#pointEditComponent.setDeleteHandler((deletedPoint) => {
-      this.#closeEditor();
+      this.closeEditor();
       document.removeEventListener('keydown', this.#onDocumentKeyDown);
       this.#onUpdate(
         UserAction.DELETE_POINT,
@@ -80,7 +80,7 @@ export default class PointPresenter {
   resetView() {
     if (this.#mode !== Mode.Closed) {
       this.#pointEditComponent.reset(this.#point);
-      this.#closeEditor();
+      this.closeEditor();
     }
   }
 
@@ -93,14 +93,15 @@ export default class PointPresenter {
     render(this.#container, this.#pointComponent, Positions.BEFORE_END);
   }
 
-  #openEditor = () => {
+  openEditor = () => {
     this.#pointComponent.element.replaceWith(this.#pointEditComponent.element);
     this.#pointEditComponent.setDatepickers();
     this.#onOpen();
     this.#mode = Mode.Open;
+    this.#pointEditComponent.element.scrollIntoView();
   };
 
-  #closeEditor = () => {
+  closeEditor = () => {
     this.#pointEditComponent.element.replaceWith(this.#pointComponent.element);
     this.#mode = Mode.Closed;
   };

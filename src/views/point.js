@@ -9,15 +9,15 @@ const createOfferItemTemplate = ({title, price}) => (
   </li>`
 );
 
-const offersTemplate = (offers) => (
+const offersTemplate = (offers = []) => (
   offers
     .map((offer) => createOfferItemTemplate(offer))
     .join('')
 );
 
 const createPointTemplate = (point) => {
-  const {dateFrom, dateTo, type, destination, basePrice, offers, isFavorite} = point;
-  const {name: destinationName} = destination;
+  const {dateFrom, dateTo, type = '', destination = {}, basePrice, offers, isFavorite} = point;
+  const {name: destinationName = ''} = destination;
 
   const dateFromAttr = formatDate(dateFrom, 'YYYY-MM-DD');
   const timeFrom = formatDate(dateFrom, 'HH:mm');

@@ -6,4 +6,9 @@ export default class NewButton extends AbstractView {
   get template() {
     return createNewButtonTemplate();
   }
+
+  setNewButtonClickHandler (cb) {
+    this._handlers.onNewButtonClick = cb;
+    this.element.addEventListener('click', this._handlers.onNewButtonClick);
+  }
 }
