@@ -31,7 +31,9 @@ export default class TripPresenter {
   #costComponent;
   #sortingComponent;
 
-  constructor(pointsModel, filtersModel) {
+  constructor(controlsContainer, pointsContainer, pointsModel, filtersModel) {
+    this.#controlsElement = controlsContainer;
+    this.#pointsElement = pointsContainer;
     this.#pointsModel = pointsModel;
     this.#filtersModel = filtersModel;
     this.#pointPresenters = new Map();
@@ -40,10 +42,7 @@ export default class TripPresenter {
     this.#filtersModel.addObserver(this.#handleModelEvent);
   }
 
-  init(controlsContainer, pointsContainer) {
-    this.#controlsElement = controlsContainer;
-    this.#pointsElement = pointsContainer;
-
+  init() {
     if (!this.points.length) {
       this.#renderEmptyTrip();
       return;
@@ -170,15 +169,22 @@ export default class TripPresenter {
         this.#pointPresenters.get(point.id).init(point);
         break;
       case UpdateType.LIST:
-        this.#clearPointsList();
-        this.#renderPointsList();
+        this.#rerenderList();
         break;
       case UpdateType.TRIP:
-        this.#clearPointsList();
-        this.#renderPointsList();
+        this.#rerenderList();
         this.#renderCost();
         break;
     }
+  }
+
+  #rerenderList = () => {
+    this.#clearPointsList();
+    if (this.points.length > 0) {
+      this.#renderPointsList();
+      return;
+    }
+    this.#renderEmptyTrip();
   }
 
   #sortPoints = (sortType) => {

@@ -24,5 +24,5 @@ const tripPoints = new Array(RENDERED_EVENTS_NUMBER)
   .map(generatePoint);
 pointsModel.points = tripPoints;
 
-new TripPresenter(pointsModel, filtersModel)
-  .init(tripControlsElement, tripEventsElement);
+new TripPresenter(tripControlsElement, tripEventsElement, pointsModel, filtersModel)
+  .init();
