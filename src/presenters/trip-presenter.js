@@ -1,16 +1,6 @@
-import {
-  calculateCost,
-  calculateTripEnd,
-  calculateTripStart,
-  filterTripPoints,
-  getUniqueDestinations,
-  sortTripPoints
-} from '../utils/calculate';
-import { Positions, render } from '../utils/dom';
+import { filterTripPoints, sortTripPoints } from '../utils/calculate';
+import { Positions, remove, render } from '../utils/dom';
 import EmptyView from '../views/empty';
-import HeaderView from '../views/header';
-import RouteView from '../views/route';
-import CostView from '../views/cost';
 import SortingView from '../views/sorting';
 import PointsView from '../views/points';
 import LoadingView from '../views/loading';
@@ -25,12 +15,11 @@ export default class TripPresenter {
   #controlsElement;
   #pointsElement;
   #pointsListComponent;
-  #headerComponent;
   #activeFilter;
   #pointPresenters;
   #activeSorting;
-  #costComponent;
   #sortingComponent;
+  #newButtonComponent;
 
   constructor(controlsContainer, pointsContainer, pointsModel, filtersModel) {
     this.#controlsElement = controlsContainer;
@@ -73,37 +62,19 @@ export default class TripPresenter {
     render(this.#pointsElement, new EmptyView(this.#activeFilter), Positions.BEFORE_END);
   }
 
-  #renderHeader = () => {
-    this.#headerComponent = new HeaderView();
-    render(this.#controlsElement, this.#headerComponent, Positions.BEFORE_BEGIN);
-  }
-
   #renderNewButton = () => {
-    const newButton = new NewButtonView();
-    newButton.setNewButtonClickHandler(this.#addNewPoint);
-    render(this.#controlsElement, newButton, Positions.AFTER_END);
-  }
-
-  #renderRoute = () => {
-    const uniqueDestinations = getUniqueDestinations(this.points);
-    const startDate = calculateTripStart(this.points);
-    const endDate = calculateTripEnd(this.points);
-    render(this.#headerComponent, new RouteView(uniqueDestinations, startDate, endDate), Positions.BEFORE_END);
-  }
-
-  #renderCost = () => {
-    const cost = calculateCost(this.points);
-
-    if (!this.#costComponent) {
-      this.#costComponent = new CostView(cost);
-      render(this.#headerComponent, this.#costComponent, Positions.BEFORE_END);
+    if (!this.#newButtonComponent) {
+      this.#newButtonComponent = new NewButtonView();
+      this.#newButtonComponent.setNewButtonClickHandler(this.#addNewPoint);
+      render(this.#controlsElement, this.#newButtonComponent, Positions.AFTER_END);
       return;
     }
 
-    const prevElement = this.#costComponent.element;
-    this.#costComponent.removeElement();
-    this.#costComponent = new CostView(cost);
-    prevElement.replaceWith(this.#costComponent.element);
+    const prevElement = this.#newButtonComponent.element;
+    this.#newButtonComponent.removeElement();
+    this.#newButtonComponent = new NewButtonView();
+    this.#newButtonComponent.setNewButtonClickHandler(this.#addNewPoint);
+    prevElement.replaceWith(this.#newButtonComponent.element);
   }
 
   #renderSorting = (sortingType) => {
@@ -149,9 +120,6 @@ export default class TripPresenter {
   }
 
   #renderContent = () => {
-    this.#renderHeader();
-    this.#renderRoute();
-    this.#renderCost();
     this.#renderSorting(Sortings.Day);
     this.#renderNewButton();
     this.#renderPointsListContainer();
@@ -185,7 +153,6 @@ export default class TripPresenter {
         break;
       case UpdateType.TRIP:
         this.#rerenderList();
-        this.#renderCost();
         break;
     }
   }
@@ -220,5 +187,13 @@ export default class TripPresenter {
     this.#sortPoints(evt.target.dataset.key);
     this.#clearPointsList();
     this.#renderPointsList();
+  }
+
+  destroy = () => {
+    this.#clearPointsList();
+    remove(this.#sortingComponent);
+    this.#sortingComponent = null;
+    this.#pointsModel.removeObserver(this.#handleModelEvent);
+    this.#filtersModel.removeObserver(this.#handleModelEvent);
   }
 }

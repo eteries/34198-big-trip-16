@@ -1,5 +1,5 @@
 import { TABS } from '../constants';
-import AbstractView from './abstract-view';
+import SmartView from './smart-view';
 
 const createTabsTemplate = (activeTab) => (
   TABS
@@ -24,10 +24,31 @@ const createNavigationTemplate = (activeTab) => {
   );
 };
 
-export default class Navigation extends AbstractView {
-  #activeTab = TABS[0];
+export default class Navigation extends SmartView {
+  _state = {
+    activeTab: TABS[0]
+  }
 
   get template() {
-    return createNavigationTemplate(this.#activeTab);
+    return createNavigationTemplate(this._state.activeTab);
+  }
+
+  setNavigationClickHandler(cb) {
+    this._handlers.onNavigationClick = cb;
+    this.element.addEventListener('click', (evt) => {
+      evt.preventDefault();
+      if (evt.target.tagName !== 'A') {
+        return;
+      }
+
+      const tab = evt.target.textContent;
+      this._handlers.onNavigationClick(tab);
+      this.updateState({activeTab: tab});
+      this.updateElement();
+    });
+  }
+
+  _restoreHandlers = () => {
+    this.setNavigationClickHandler(this._handlers.onNavigationClick);
   }
 }
